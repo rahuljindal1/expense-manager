@@ -22,15 +22,22 @@ import {
 import dayjs from "dayjs";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { toast } from "react-toastify";
+import { ClipLoader } from "react-spinners";
 
 export default function TransactionList({ refetch }: { refetch?: boolean }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const EmptyTransactionsMessage = () => {
+  const InitialLoad = () => {
     if (transactions.length > 0) {
       return null;
+    }
+
+    if (isLoading) {
+      return <ClipLoader />;
     }
 
     return (
@@ -43,12 +50,20 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
   const fetchTransaction = async (currentPage: number) => {
     const limit = ITEMS_PER_PAGE * currentPage;
     const offset = ITEMS_PER_PAGE * (currentPage - 1);
-    const { transactions, totalCount } = await listTransactions({
-      limit,
-      offset,
-    });
-    setTransactions(transactions);
-    setTotalCount(totalCount);
+
+    setIsLoading(true);
+    try {
+      const { transactions, totalCount } = await listTransactions({
+        limit,
+        offset,
+      });
+      setTransactions(transactions);
+      setTotalCount(totalCount);
+    } catch (error: any) {
+      toast.error(error.message || "Some unexpected error occurred.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDeleteTransaction = async (transactionId: string) => {
@@ -57,18 +72,22 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
   };
 
   useEffect(() => {
-    fetchTransaction(currentPage);
+    (async () => {
+      await fetchTransaction(currentPage);
+    })();
   }, [currentPage]);
 
   useEffect(() => {
     if (refetch) {
-      fetchTransaction(1);
+      (async () => {
+        await fetchTransaction(1);
+      })();
     }
   }, [refetch]);
 
   return (
     <div className="space-y-4 flex flex-col justify-center items-center w-[100%] gap-4">
-      <EmptyTransactionsMessage />
+      <InitialLoad />
       {transactions.length > 0 && (
         <TableContainer component={Paper} className="w-[100%] h-[100%]">
           <Table>

@@ -4,6 +4,7 @@ import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Sidebar from "@/components/Sidebar";
 import { Metadata } from "next";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -33,6 +34,7 @@ export default function RootLayout({
           <Sidebar />
           {children}
         </div>
+        <ToastContainer />
       </body>
     </html>
   );
