@@ -68,6 +68,8 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
 
   const handleDeleteTransaction = async (transactionId: string) => {
     await deleteTransaction(transactionId);
+    toast.success("Transaction deleted successfully");
+
     await fetchTransaction(currentPage);
   };
 

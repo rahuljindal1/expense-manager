@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import { AddTransactionFormaValues } from "@/types/transaction";
 import { v4 as uuidV4 } from "uuid";
 import { createNewTransaction } from "@/services/transaction.action";
+import { toast } from "react-toastify";
 
 const schema = yup.object().shape({
   description: yup.string().required("Description is required"),
@@ -43,6 +44,7 @@ export default function TransactionEntry() {
         amount: values.amount as number,
         transactionDate: values.transactionDate!.toISOString(),
       });
+      toast.success("Transaction added successfully");
       router.replace("/transactions?refetch=true");
     },
   });
