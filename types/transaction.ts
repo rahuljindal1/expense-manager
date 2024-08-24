@@ -9,7 +9,7 @@ export type AddTransactionFormaValues = {
   transactionDate: Dayjs | null;
 };
 
-export type AddTransactionPayload = {
+export type Transaction = {
   id: string;
   description: string;
   amount: number;

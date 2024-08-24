@@ -4,6 +4,7 @@ import { Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useRouter } from "next/navigation";
 import TransactionEntry from "./Entry";
+import TransactionList from "./List";
 
 type SearchParamProps = {
   searchParams: {
@@ -17,7 +18,9 @@ export default function Transactions({
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex px-4 py-12 w-screen">
+      <TransactionList />
+
       <div className="fixed bottom-4 right-4">
         <Button
           variant="contained"

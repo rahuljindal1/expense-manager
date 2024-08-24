@@ -25,7 +25,7 @@ const schema = yup.object().shape({
   transactionDate: yup.date().required("Transaction Date is required"),
 });
 
-export default async function TransactionEntry() {
+export default function TransactionEntry() {
   const router = useRouter();
   const formik = useFormik<AddTransactionFormaValues>({
     initialValues: {

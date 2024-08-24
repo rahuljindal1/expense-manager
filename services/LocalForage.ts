@@ -9,7 +9,7 @@ export enum KEY_NAMES {
 }
 
 export class LocalForageService {
-  public async setItem(key: KEY_NAMES, value: any) {
+  public async setItem(key: KEY_NAMES, value: Record<string, any>) {
     await localforage.setItem(key, value);
   }
 
