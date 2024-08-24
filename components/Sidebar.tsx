@@ -6,7 +6,10 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { AiOutlineDollar } from "react-icons/ai";
 
-const menuItems = [{ name: "Cash Flow", path: "/", icon: AiOutlineDollar }];
+const menuItems = [
+  { name: "Dashboard", path: "/", icon: AiOutlineDollar },
+  { name: "Transactions", path: "/transactions", icon: AiOutlineDollar },
+];
 
 function Sidebar() {
   const pathname = usePathname();
