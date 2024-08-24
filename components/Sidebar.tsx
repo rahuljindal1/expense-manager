@@ -4,11 +4,16 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { AiOutlineDollar } from "react-icons/ai";
+import DashboardCustomizeOutlinedIcon from "@mui/icons-material/DashboardCustomizeOutlined";
+import SwapHorizOutlinedIcon from "@mui/icons-material/SwapHorizOutlined";
 
 const menuItems = [
-  { name: "Dashboard", path: "/", icon: AiOutlineDollar },
-  { name: "Transactions", path: "/transactions", icon: AiOutlineDollar },
+  { name: "Dashboard", path: "/", icon: DashboardCustomizeOutlinedIcon },
+  {
+    name: "Transactions",
+    path: "/transactions",
+    icon: SwapHorizOutlinedIcon,
+  },
 ];
 
 function Sidebar() {
