@@ -18,6 +18,7 @@ import Pagination from "@/components/Pagination";
 import { listTransactions } from "@/services/transaction.action";
 import dayjs from "dayjs";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function TransactionList({ refetch }: { refetch?: boolean }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -66,7 +67,8 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
             <TableRow>
               <TableCell>Date</TableCell>
               <TableCell>Description</TableCell>
-              <TableCell align="right">Amount</TableCell>
+              <TableCell align="left">Amount</TableCell>
+              <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -77,7 +79,8 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                     "D MMM YYYY, h:mm A"
                   )}
                 </TableCell>
-                <TableCell className="w-[80%]">
+
+                <TableCell className="w-[60%]">
                   <Tooltip
                     title={transaction.description}
                     placement="bottom-start"
@@ -87,9 +90,10 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                     </Box>
                   </Tooltip>
                 </TableCell>
+
                 <TableCell
-                  align="right"
-                  className={`font-bold w-[20%] ${
+                  align="left"
+                  className={`font-bold w-[10%] ${
                     transaction.transactionType === "Expense"
                       ? "text-red-500"
                       : "text-green-500"
@@ -98,6 +102,12 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                   {transaction.transactionType === "Expense"
                     ? `- ₹${transaction.amount}`
                     : `+ ₹${transaction.amount}`}
+                </TableCell>
+
+                <TableCell align="center" className="w-[30%]">
+                  <div className="flex flex-row gap-4rem items-center justify-center">
+                    <DeleteIcon />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
