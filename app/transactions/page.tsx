@@ -3,7 +3,7 @@
 import { Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useRouter } from "next/navigation";
-import AddNewEntry from "./AddEntry";
+import TransactionEntry from "./Entry";
 
 type SearchParamProps = {
   searchParams: {
@@ -31,7 +31,7 @@ export default function Transactions({
           Add Transaction
         </Button>
       </div>
-      {showAddTransactionModal && <AddNewEntry />}
+      {showAddTransactionModal && <TransactionEntry />}
     </div>
   );
 }

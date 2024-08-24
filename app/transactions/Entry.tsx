@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { AddTransactionFormaValues } from "@/types/transaction";
 import { v4 as uuidV4 } from "uuid";
 import { createNewTransaction } from "@/services/transaction.action";
@@ -25,7 +25,7 @@ const schema = yup.object().shape({
   transactionDate: yup.date().required("Transaction Date is required"),
 });
 
-export default function AddNewEntry() {
+export default async function TransactionEntry() {
   const router = useRouter();
   const formik = useFormik<AddTransactionFormaValues>({
     initialValues: {
