@@ -31,7 +31,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
 
     return (
       <Box component={"p"}>
-        Oops! No transactions found. Let's try adding one.
+        {"Oops! No transactions found. Let's try adding one"}.
       </Box>
     );
   };
