@@ -1,3 +1,5 @@
+"use server";
+
 import { AddTransactionPayload } from "@/types/transaction";
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
 
