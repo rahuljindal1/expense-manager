@@ -43,7 +43,7 @@ export default function TransactionEntry() {
         amount: values.amount as number,
         transactionDate: values.transactionDate!.toISOString(),
       });
-      router.replace("/transactions");
+      router.replace("/transactions?refetch=true");
     },
   });
 

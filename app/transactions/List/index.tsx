@@ -18,7 +18,7 @@ import Pagination from "@/components/Pagination";
 import { listTransactions } from "@/services/transaction.action";
 import dayjs from "dayjs";
 
-export default function TransactionList() {
+export default function TransactionList({ refetch }: { refetch?: boolean }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,8 +45,14 @@ export default function TransactionList() {
     fetchTransaction();
   }, [currentPage]);
 
+  useEffect(() => {
+    if (refetch) {
+      fetchTransaction();
+    }
+  }, [refetch]);
+
   return (
-    <div className="space-y-4 flex flex-col justify-center items-center w-[100%]">
+    <div className="space-y-4 flex flex-col justify-center items-center w-[100%] gap-4">
       <EmptyTransactionsMessage />
       <TableContainer component={Paper} className="w-[100%] h-[100%]">
         <Table>

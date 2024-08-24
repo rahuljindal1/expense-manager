@@ -9,17 +9,18 @@ import TransactionList from "./List";
 type SearchParamProps = {
   searchParams: {
     showAddTransactionModal?: boolean;
+    refetch?: boolean;
   };
 };
 
 export default function Transactions({
-  searchParams: { showAddTransactionModal },
+  searchParams: { showAddTransactionModal, refetch },
 }: SearchParamProps) {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex px-4 py-12 w-screen">
-      <TransactionList />
+    <div className="min-h-screen max-h-screen flex px-4 py-12 w-screen">
+      <TransactionList refetch={refetch} />
 
       <div className="fixed bottom-4 right-4">
         <Button
