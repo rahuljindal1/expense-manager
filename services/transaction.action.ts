@@ -1,5 +1,6 @@
 import { Transaction } from "@/types/transaction";
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
+import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 
 const localForageService = new LocalForageService();
 
@@ -17,11 +18,22 @@ export const createNewTransaction = async (payload: Transaction) => {
   await localForageService.setItem(KEY_NAMES.TRANSACTIONS, allTransactions);
 };
 
-export const listTransactions = async () => {
+export const listTransactions = async ({
+  limit,
+  offset,
+}: {
+  limit?: number;
+  offset?: number;
+}) => {
   const allTransactions =
     ((await localForageService.getItem(
       KEY_NAMES.TRANSACTIONS
     )) as Transaction[]) || [];
 
-  return { transactions: allTransactions, totalCount: allTransactions.length };
+  const filteredTransactions = allTransactions.slice(offset, limit);
+
+  return {
+    transactions: filteredTransactions,
+    totalCount: allTransactions.length,
+  };
 };

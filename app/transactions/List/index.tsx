@@ -17,6 +17,7 @@ import { truncateString } from "@/lib/utils";
 import Pagination from "@/components/Pagination";
 import { listTransactions } from "@/services/transaction.action";
 import dayjs from "dayjs";
+import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 
 export default function TransactionList({ refetch }: { refetch?: boolean }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -35,19 +36,24 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
     );
   };
 
-  const fetchTransaction = async () => {
-    const { transactions, totalCount } = await listTransactions();
+  const fetchTransaction = async (currentPage: number) => {
+    const limit = ITEMS_PER_PAGE * currentPage;
+    const offset = ITEMS_PER_PAGE * (currentPage - 1);
+    const { transactions, totalCount } = await listTransactions({
+      limit,
+      offset,
+    });
     setTransactions(transactions);
     setTotalCount(totalCount);
   };
 
   useEffect(() => {
-    fetchTransaction();
+    fetchTransaction(currentPage);
   }, [currentPage]);
 
   useEffect(() => {
     if (refetch) {
-      fetchTransaction();
+      fetchTransaction(1);
     }
   }, [refetch]);
 
@@ -72,8 +78,11 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                   )}
                 </TableCell>
                 <TableCell className="w-[80%]">
-                  <Tooltip title={transaction.description}>
-                    <Box component={"p"}>
+                  <Tooltip
+                    title={transaction.description}
+                    placement="bottom-start"
+                  >
+                    <Box component={"p"} className="font-semibold">
                       {truncateString(transaction.description, 60)}
                     </Box>
                   </Tooltip>
