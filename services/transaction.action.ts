@@ -37,3 +37,19 @@ export const listTransactions = async ({
     totalCount: allTransactions.length,
   };
 };
+
+export const deleteTransaction = async (id: string) => {
+  const allTransactions =
+    ((await localForageService.getItem(
+      KEY_NAMES.TRANSACTIONS
+    )) as Transaction[]) || [];
+
+  const filteredTransactions = allTransactions.filter(
+    (transaction) => transaction.id !== id
+  );
+
+  await localForageService.setItem(
+    KEY_NAMES.TRANSACTIONS,
+    filteredTransactions
+  );
+};
