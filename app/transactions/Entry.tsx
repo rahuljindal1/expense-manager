@@ -171,7 +171,7 @@ export default function TransactionEntry({
                       <InputAdornment position="start">₹</InputAdornment>
                     ),
                   }}
-                  InputLabelProps={{ shrink: Boolean(formik.values.amount) }}
+                  InputLabelProps={{ shrink: true }}
                 />
 
                 <FormControl fullWidth>

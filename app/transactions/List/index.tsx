@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Transaction } from "@/types/transaction";
-import { truncateString } from "@/lib/utils";
+import { formatToIndianCurrency, truncateString } from "@/lib/utils";
 import Pagination from "@/components/Pagination";
 import {
   deleteTransaction,
@@ -101,7 +101,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
               <TableRow>
                 <TableCell>Date</TableCell>
                 <TableCell>Description</TableCell>
-                <TableCell align="left">Amount</TableCell>
+                <TableCell align="right">Amount</TableCell>
                 <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -114,7 +114,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                     )}
                   </TableCell>
 
-                  <TableCell className="w-[60%] text-base ">
+                  <TableCell className="w-[50%] text-base ">
                     <Tooltip
                       title={transaction.description}
                       placement="bottom-start"
@@ -126,16 +126,16 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                   </TableCell>
 
                   <TableCell
-                    align="left"
-                    className={`font-bold w-[10%] ${
+                    align="right"
+                    className={`font-bold w-[20%] ${
                       transaction.transactionType === "Expense"
                         ? "text-red-500"
                         : "text-green-500"
                     }`}
                   >
                     {transaction.transactionType === "Expense"
-                      ? `- ₹${transaction.amount}`
-                      : `+ ₹${transaction.amount}`}
+                      ? `- ₹${formatToIndianCurrency(transaction.amount)}`
+                      : `+ ₹${formatToIndianCurrency(transaction.amount)}`}
                   </TableCell>
 
                   <TableCell align="center" className="w-[30%]">
