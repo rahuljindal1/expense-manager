@@ -1,11 +1,12 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import DashboardCustomizeOutlinedIcon from "@mui/icons-material/DashboardCustomizeOutlined";
+import SwapHorizOutlinedIcon from "@mui/icons-material/SwapHorizOutlined";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import DashboardCustomizeOutlinedIcon from "@mui/icons-material/DashboardCustomizeOutlined";
-import SwapHorizOutlinedIcon from "@mui/icons-material/SwapHorizOutlined";
+
+import { cn } from "@/lib/utils";
 
 const menuItems = [
   { name: "Dashboard", path: "/", icon: DashboardCustomizeOutlinedIcon },

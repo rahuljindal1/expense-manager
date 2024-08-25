@@ -1,6 +1,7 @@
-import { Transaction } from "@/types/transaction";
-import { KEY_NAMES, LocalForageService } from "./LocalForage";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
+import { Transaction } from "@/types/transaction";
+
+import { KEY_NAMES, LocalForageService } from "./LocalForage";
 
 const localForageService = new LocalForageService();
 

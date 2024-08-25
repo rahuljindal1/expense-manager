@@ -1,10 +1,10 @@
 import "./globals.css";
-import { Inter as FontSans } from "next/font/google";
-
-import { cn } from "@/lib/utils";
-import Sidebar from "@/components/Sidebar";
 import { Metadata } from "next";
+import { Inter as FontSans } from "next/font/google";
 import { ToastContainer } from "react-toastify";
+
+import Sidebar from "@/components/Sidebar";
+import { cn } from "@/lib/utils";
 import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {

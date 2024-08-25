@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
 import { Pagination as MuiPagination } from "@mui/material";
+import React from "react";
+
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 
 type PaginationProps = {
