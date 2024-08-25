@@ -16,9 +16,9 @@ import {
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 
+import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 import { formatToIndianCurrency, truncateString } from "@/lib/utils";
@@ -42,7 +42,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
     }
 
     if (isLoading) {
-      return <ClipLoader />;
+      return <Loader />;
     }
 
     return (

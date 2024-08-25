@@ -17,10 +17,10 @@ import dayjs from "dayjs";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { v4 as uuidV4 } from "uuid";
 
+import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
 import { TransactionType } from "@/enums/TransactionType";
 import { cn } from "@/lib/utils";
@@ -78,10 +78,6 @@ export default function TransactionEntry({
     },
   });
 
-  const onCancel = () => {
-    router.replace("/transactions");
-  };
-
   const fetchTransaction = async (transactionId: string) => {
     setIsLoading(true);
     try {
@@ -113,7 +109,7 @@ export default function TransactionEntry({
       <Modal title="Add Transaction">
         {isFetchingInitialData && (
           <div className="h-[300px] w-[500px] flex justify-center items-center">
-            <ClipLoader />
+            <Loader />
           </div>
         )}
         {!isFetchingInitialData && (
@@ -234,7 +230,9 @@ export default function TransactionEntry({
                 </Button>
                 <Button
                   variant="outlined"
-                  onClick={onCancel}
+                  onClick={() => {
+                    router.replace("/transactions");
+                  }}
                   disabled={isLoading}
                 >
                   Cancel
