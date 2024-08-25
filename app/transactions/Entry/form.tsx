@@ -267,8 +267,8 @@ export default function TransactionEntry({
                   />
                 )}
                 renderOption={(props, option) => {
-                  const isSelected = formik.values.categories?.includes(
-                    option.id
+                  const isSelected = selectedCategories?.some(
+                    (category) => category.id === option.id
                   );
 
                   return (
