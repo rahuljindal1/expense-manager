@@ -21,6 +21,7 @@ import { v4 as uuidV4 } from "uuid";
 
 import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
+import { UNEXPECTED_ERROR } from "@/constants/Error";
 import { TransactionType } from "@/enums/TransactionType";
 import { cn } from "@/lib/utils";
 import { ToastService } from "@/services/ToastService";
@@ -73,7 +74,7 @@ export default function TransactionEntry({
         }
         router.replace("/transactions?refetch=true");
       } catch (error: any) {
-        toastService.error(error.message || "Some unexpected error occurred");
+        toastService.error(error.message || UNEXPECTED_ERROR);
       } finally {
         setIsLoading(false);
       }
@@ -92,7 +93,7 @@ export default function TransactionEntry({
         transactionDate: dayjs(transaction.transactionDate),
       });
     } catch (error: any) {
-      toastService.error(error.message || "some unexpected error occurred");
+      toastService.error(error.message || UNEXPECTED_ERROR);
       router.replace("/transactions");
     } finally {
       setIsFetchingInitialData(false);
