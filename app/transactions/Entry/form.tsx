@@ -46,6 +46,9 @@ export default function TransactionEntry({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingInitialData, setIsFetchingInitialData] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<
+    typeof CATEGORIES
+  >([]);
 
   const formik = useFormik<AddTransactionFormaValues>({
     initialValues: {
@@ -95,6 +98,12 @@ export default function TransactionEntry({
         transactionType: transaction.transactionType,
         transactionDate: dayjs(transaction.transactionDate),
       });
+
+      setSelectedCategories(
+        CATEGORIES.filter((category) =>
+          transaction.categories?.includes(category.id)
+        )
+      );
     } catch (error: any) {
       toastService.error(error.message || UNEXPECTED_ERROR);
       router.replace("/transactions");
@@ -235,15 +244,10 @@ export default function TransactionEntry({
 
               <Autocomplete
                 multiple={true}
-                limitTags={2}
+                limitTags={3}
                 options={CATEGORIES}
                 getOptionLabel={(option) => option.name}
-                defaultValue={CATEGORIES.filter((category) =>
-                  formik.values.categories?.includes(category.id)
-                )}
-                value={CATEGORIES.filter((category) =>
-                  formik.values.categories?.includes(category.id)
-                )}
+                value={selectedCategories}
                 onChange={(
                   event: React.SyntheticEvent,
                   newValues: typeof CATEGORIES
@@ -252,6 +256,7 @@ export default function TransactionEntry({
                     "categories",
                     newValues.map((category) => category.id)
                   );
+                  setSelectedCategories(newValues);
                 }}
                 renderInput={(params) => (
                   <TextField
@@ -261,6 +266,48 @@ export default function TransactionEntry({
                     name="categories"
                   />
                 )}
+                renderOption={(props, option) => {
+                  const isSelected = formik.values.categories?.includes(
+                    option.id
+                  );
+
+                  return (
+                    <li
+                      {...props}
+                      className={cn(
+                        "flex items-center p-2 px-4 gap-4 cursor-pointer",
+                        isSelected ? "bg-blue-100" : "bg-white"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "w-7 h-7 flex items-center justify-center rounded-full",
+                          isSelected ? "bg-blue-200" : "bg-gray-200"
+                        )}
+                      >
+                        {option.icon ? (
+                          <option.icon
+                            className={cn(
+                              "text-gray-700 w-5 h-5",
+                              isSelected ? "text-blue-700" : ""
+                            )}
+                          />
+                        ) : null}
+                      </div>
+                      {option.name}
+                    </li>
+                  );
+                }}
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      label={option.name}
+                      icon={<option.icon className="text-gray-700 w-5 h-5" />}
+                      {...getTagProps({ index })}
+                      className="mr-2"
+                    />
+                  ))
+                }
               />
 
               <div className="flex gap-4">
