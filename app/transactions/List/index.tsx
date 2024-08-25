@@ -25,8 +25,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
 
 export default function TransactionList({ refetch }: { refetch?: boolean }) {
+  const router = useRouter();
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -142,7 +145,9 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                           className="cursor-pointer"
                           component={"div"}
                           onClick={() =>
-                            handleDeleteTransaction(transaction.id)
+                            router.push(
+                              `/transactions?showTransactionModal=true&transactionId=${transaction.id}`
+                            )
                           }
                         >
                           <EditIcon />

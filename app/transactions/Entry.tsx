@@ -10,9 +10,14 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { AddTransactionFormaValues } from "@/types/transaction";
 import { v4 as uuidV4 } from "uuid";
-import { createNewTransaction } from "@/services/transaction.action";
+import {
+  createNewTransaction,
+  editTransaction,
+  getTransactionById,
+} from "@/services/transaction.action";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 const schema = yup.object().shape({
   description: yup.string().required("Description is required"),
@@ -34,6 +39,7 @@ export default function TransactionEntry({
 }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingInitialData, setIsFetchingInitialData] = useState(false);
 
   const formik = useFormik<AddTransactionFormaValues>({
     initialValues: {
@@ -47,12 +53,21 @@ export default function TransactionEntry({
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
-        await createNewTransaction({
-          ...values,
-          amount: values.amount as number,
-          transactionDate: values.transactionDate!.toISOString(),
-        });
-        toast.success("Transaction added successfully");
+        if (transactionId) {
+          await editTransaction({
+            ...values,
+            amount: values.amount as number,
+            transactionDate: values.transactionDate!.toISOString(),
+          });
+          toast.success("Transaction edited successfully");
+        } else {
+          await createNewTransaction({
+            ...values,
+            amount: values.amount as number,
+            transactionDate: values.transactionDate!.toISOString(),
+          });
+          toast.success("Transaction added successfully");
+        }
         router.replace("/transactions?refetch=true");
       } catch (error: any) {
         toast.error(error.message || "Some unexpected error occurred");
@@ -66,102 +81,146 @@ export default function TransactionEntry({
     router.replace("/transactions");
   };
 
+  const fetchTransaction = async (transactionId: string) => {
+    setIsLoading(true);
+    try {
+      const transaction = await getTransactionById(transactionId);
+      formik.setValues({
+        id: transaction.id,
+        description: transaction.description,
+        amount: transaction.amount,
+        transactionType: transaction.transactionType,
+        transactionDate: dayjs(transaction.transactionDate),
+      });
+    } catch (error: any) {
+      toast.error(error.message || "some unexpected error occurred");
+      router.replace("/transactions");
+    } finally {
+      setIsFetchingInitialData(false);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (transactionId) {
+      (async () => await fetchTransaction(transactionId))();
+    }
+  }, [transactionId]);
+
   return (
-    <Modal title="Add Transaction">
-      <div className="flex flex-col w-[600px]">
-        <Box
-          component={"form"}
-          onSubmit={formik.handleSubmit}
-          className="flex flex-col gap-8"
-        >
-          <TextField
-            name="description"
-            label="Description"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={formik.values.description}
-            onChange={formik.handleChange}
-            error={!!formik.errors.description && formik.touched.description}
-            helperText={
-              formik.touched.description ? formik.errors.description : ""
-            }
-            className="m-0 p-0"
-          />
-
-          <div className="flex gap-4 m-0 p-0">
-            <TextField
-              name="amount"
-              label="Amount"
-              type="number"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={formik.values.amount}
-              onChange={formik.handleChange}
-              error={!!formik.errors.amount && formik.touched.amount}
-              helperText={formik.touched.amount ? formik.errors.amount : ""}
-              className="m-0 p-0"
-            />
-
-            <TextField
-              select
-              name="transactionType"
-              label="Transaction Type"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={formik.values.transactionType}
-              onChange={formik.handleChange}
-              error={
-                !!formik.errors.transactionType &&
-                formik.touched.transactionType
-              }
-              helperText={
-                formik.touched.transactionType
-                  ? formik.errors.transactionType
-                  : ""
-              }
-              className="m-0 p-0"
+    <>
+      <Modal title="Add Transaction">
+        {isFetchingInitialData && (
+          <div className="h-[300px] w-[500px] flex justify-center items-center">
+            <ClipLoader />
+          </div>
+        )}
+        {!isFetchingInitialData && (
+          <div className="flex flex-col w-[600px]">
+            <Box
+              component={"form"}
+              onSubmit={formik.handleSubmit}
+              className="flex flex-col gap-8"
             >
-              {Object.values(TransactionType).map((type) => (
-                <MenuItem key={type} value={type}>
-                  {type}
-                </MenuItem>
-              ))}
-            </TextField>
-          </div>
+              <TextField
+                name="description"
+                label="Description"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                error={
+                  !!formik.errors.description && formik.touched.description
+                }
+                helperText={
+                  formik.touched.description ? formik.errors.description : ""
+                }
+                className="m-0 p-0"
+              />
 
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker
-              label="Transaction Date"
-              name="transactionDate"
-              defaultValue={formik.values.transactionDate}
-              value={formik.values.transactionDate}
-              onChange={(date) => formik.setFieldValue("transactionDate", date)}
-              slotProps={{
-                textField: {
-                  helperText: formik.touched.transactionDate
-                    ? formik.errors.transactionDate
-                    : "",
-                  error:
-                    !!formik.errors.transactionDate &&
-                    formik.touched.transactionDate,
-                },
-              }}
-            />
-          </LocalizationProvider>
+              <div className="flex gap-4 m-0 p-0">
+                <TextField
+                  name="amount"
+                  label="Amount"
+                  type="number"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={formik.values.amount}
+                  onChange={formik.handleChange}
+                  error={!!formik.errors.amount && formik.touched.amount}
+                  helperText={formik.touched.amount ? formik.errors.amount : ""}
+                  className="m-0 p-0"
+                  InputLabelProps={{ shrink: Boolean(formik.values.amount) }}
+                />
 
-          <div className="flex gap-4">
-            <Button variant="contained" type="submit" disabled={isLoading}>
-              {isLoading ? "Saving..." : "Save"}
-            </Button>
-            <Button variant="outlined" onClick={onCancel} disabled={isLoading}>
-              Cancel
-            </Button>
+                <TextField
+                  select
+                  name="transactionType"
+                  label="Transaction Type"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={formik.values.transactionType}
+                  onChange={formik.handleChange}
+                  error={
+                    !!formik.errors.transactionType &&
+                    formik.touched.transactionType
+                  }
+                  helperText={
+                    formik.touched.transactionType
+                      ? formik.errors.transactionType
+                      : ""
+                  }
+                  className="m-0 p-0"
+                >
+                  {Object.values(TransactionType).map((type) => (
+                    <MenuItem key={type} value={type}>
+                      {type}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </div>
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker
+                  label="Transaction Date"
+                  name="transactionDate"
+                  defaultValue={formik.values.transactionDate}
+                  value={formik.values.transactionDate}
+                  onChange={(date) =>
+                    formik.setFieldValue("transactionDate", date)
+                  }
+                  slotProps={{
+                    textField: {
+                      helperText: formik.touched.transactionDate
+                        ? formik.errors.transactionDate
+                        : "",
+                      error:
+                        !!formik.errors.transactionDate &&
+                        formik.touched.transactionDate,
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+
+              <div className="flex gap-4">
+                <Button variant="contained" type="submit" disabled={isLoading}>
+                  {isLoading ? "Saving..." : "Save"}
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={onCancel}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </Box>
           </div>
-        </Box>
-      </div>
-    </Modal>
+        )}
+      </Modal>
+    </>
   );
 }

@@ -18,6 +18,28 @@ export const createNewTransaction = async (payload: Transaction) => {
   await localForageService.setItem(KEY_NAMES.TRANSACTIONS, allTransactions);
 };
 
+export const editTransaction = async (payload: Transaction) => {
+  const allTransactions =
+    ((await localForageService.getItem(
+      KEY_NAMES.TRANSACTIONS
+    )) as Transaction[]) || [];
+
+  const index = allTransactions.findIndex(
+    (transaction) => transaction.id === payload.id
+  );
+  if (index === -1) {
+    throw new Error("No transaction found");
+  }
+  allTransactions[index] = payload;
+
+  allTransactions.sort(
+    (a, b) =>
+      new Date(b.transactionDate).getTime() -
+      new Date(a.transactionDate).valueOf()
+  );
+  await localForageService.setItem(KEY_NAMES.TRANSACTIONS, allTransactions);
+};
+
 export const listTransactions = async ({
   limit,
   offset,

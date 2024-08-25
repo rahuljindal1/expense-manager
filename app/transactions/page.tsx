@@ -5,6 +5,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useRouter } from "next/navigation";
 import TransactionEntry from "./Entry";
 import TransactionList from "./List";
+import { useEffect, useState } from "react";
 
 type SearchParamProps = {
   searchParams: {
