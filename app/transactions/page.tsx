@@ -4,7 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 
-import TransactionEntry from "./Entry";
+import TransactionEntryForm from "./Entry/form";
 import TransactionList from "./List";
 
 type SearchParamProps = {
@@ -38,7 +38,7 @@ export default function Transactions({
         </Button>
       </div>
       {showTransactionModal && (
-        <TransactionEntry transactionId={transactionId} />
+        <TransactionEntryForm transactionId={transactionId} />
       )}
     </div>
   );
