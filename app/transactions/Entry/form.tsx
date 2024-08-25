@@ -17,13 +17,13 @@ import dayjs from "dayjs";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { v4 as uuidV4 } from "uuid";
 
 import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
 import { TransactionType } from "@/enums/TransactionType";
 import { cn } from "@/lib/utils";
+import { ToastService } from "@/services/ToastService";
 import {
   createNewTransaction,
   editTransaction,
@@ -32,6 +32,8 @@ import {
 import { AddTransactionFormaValues } from "@/types/transaction";
 
 import { validationSchema } from "./formValidator";
+
+const toastService = new ToastService();
 
 export default function TransactionEntry({
   transactionId,
@@ -60,18 +62,18 @@ export default function TransactionEntry({
             amount: values.amount as number,
             transactionDate: values.transactionDate!.toISOString(),
           });
-          toast.success("Transaction edited successfully");
+          toastService.success("Transaction edited successfully");
         } else {
           await createNewTransaction({
             ...values,
             amount: values.amount as number,
             transactionDate: values.transactionDate!.toISOString(),
           });
-          toast.success("Transaction added successfully");
+          toastService.success("Transaction added successfully");
         }
         router.replace("/transactions?refetch=true");
       } catch (error: any) {
-        toast.error(error.message || "Some unexpected error occurred");
+        toastService.error(error.message || "Some unexpected error occurred");
       } finally {
         setIsLoading(false);
       }
@@ -90,7 +92,7 @@ export default function TransactionEntry({
         transactionDate: dayjs(transaction.transactionDate),
       });
     } catch (error: any) {
-      toast.error(error.message || "some unexpected error occurred");
+      toastService.error(error.message || "some unexpected error occurred");
       router.replace("/transactions");
     } finally {
       setIsFetchingInitialData(false);

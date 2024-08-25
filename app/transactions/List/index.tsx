@@ -16,17 +16,19 @@ import {
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 import { formatToIndianCurrency, truncateString } from "@/lib/utils";
+import { ToastService } from "@/services/ToastService";
 import {
   deleteTransaction,
   listTransactions,
 } from "@/services/transaction.action";
 import { Transaction } from "@/types/transaction";
+
+const toastService = new ToastService();
 
 export default function TransactionList({ refetch }: { refetch?: boolean }) {
   const router = useRouter();
@@ -65,7 +67,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
       setTransactions(transactions);
       setTotalCount(totalCount);
     } catch (error: any) {
-      toast.error(error.message || "Some unexpected error occurred.");
+      toastService.error(error.message || "Some unexpected error occurred.");
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +75,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
 
   const handleDeleteTransaction = async (transactionId: string) => {
     await deleteTransaction(transactionId);
-    toast.success("Transaction deleted successfully");
+    toastService.success("Transaction deleted successfully");
 
     await fetchTransaction(currentPage);
   };
