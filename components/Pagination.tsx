@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Pagination as MuiPagination } from "@mui/material";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
@@ -14,7 +16,6 @@ const Pagination: React.FC<PaginationProps> = ({
   onPageChange,
 }) => {
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-  console.log(totalPages);
 
   return totalPages === 0 ? (
     <></>

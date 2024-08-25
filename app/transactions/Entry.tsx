@@ -12,6 +12,7 @@ import { AddTransactionFormaValues } from "@/types/transaction";
 import { v4 as uuidV4 } from "uuid";
 import { createNewTransaction } from "@/services/transaction.action";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 const schema = yup.object().shape({
   description: yup.string().required("Description is required"),
@@ -26,8 +27,14 @@ const schema = yup.object().shape({
   transactionDate: yup.date().required("Transaction Date is required"),
 });
 
-export default function TransactionEntry() {
+export default function TransactionEntry({
+  transactionId,
+}: {
+  transactionId?: string;
+}) {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const formik = useFormik<AddTransactionFormaValues>({
     initialValues: {
       id: uuidV4(),
@@ -38,14 +45,20 @@ export default function TransactionEntry() {
     },
     validationSchema: schema,
     onSubmit: async (values) => {
-      console.log(values);
-      await createNewTransaction({
-        ...values,
-        amount: values.amount as number,
-        transactionDate: values.transactionDate!.toISOString(),
-      });
-      toast.success("Transaction added successfully");
-      router.replace("/transactions?refetch=true");
+      setIsLoading(true);
+      try {
+        await createNewTransaction({
+          ...values,
+          amount: values.amount as number,
+          transactionDate: values.transactionDate!.toISOString(),
+        });
+        toast.success("Transaction added successfully");
+        router.replace("/transactions?refetch=true");
+      } catch (error: any) {
+        toast.error(error.message || "Some unexpected error occurred");
+      } finally {
+        setIsLoading(false);
+      }
     },
   });
 
@@ -140,10 +153,10 @@ export default function TransactionEntry() {
           </LocalizationProvider>
 
           <div className="flex gap-4">
-            <Button variant="contained" type="submit">
-              Save
+            <Button variant="contained" type="submit" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save"}
             </Button>
-            <Button variant="outlined" onClick={onCancel}>
+            <Button variant="outlined" onClick={onCancel} disabled={isLoading}>
               Cancel
             </Button>
           </div>

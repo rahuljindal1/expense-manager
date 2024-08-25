@@ -53,3 +53,19 @@ export const deleteTransaction = async (id: string) => {
     filteredTransactions
   );
 };
+
+export const getTransactionById = async (id: string) => {
+  const allTransactions =
+    ((await localForageService.getItem(
+      KEY_NAMES.TRANSACTIONS
+    )) as Transaction[]) || [];
+
+  const transaction = allTransactions.find(
+    (transaction) => transaction.id === id
+  );
+  if (!transaction) {
+    throw new Error("No transaction found");
+  }
+
+  return transaction;
+};

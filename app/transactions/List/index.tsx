@@ -22,6 +22,7 @@ import {
 import dayjs from "dayjs";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 
@@ -110,7 +111,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                     )}
                   </TableCell>
 
-                  <TableCell className="w-[60%]">
+                  <TableCell className="w-[60%] text-base ">
                     <Tooltip
                       title={transaction.description}
                       placement="bottom-start"
@@ -135,14 +136,29 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                   </TableCell>
 
                   <TableCell align="center" className="w-[30%]">
-                    <div className="flex flex-row gap-4rem items-center justify-center">
-                      <Box
-                        className="cursor-pointer"
-                        component={"div"}
-                        onClick={() => handleDeleteTransaction(transaction.id)}
-                      >
-                        <DeleteIcon />
-                      </Box>
+                    <div className="flex flex-row gap-4rem items-center justify-center gap-4">
+                      <Tooltip title="Edit">
+                        <Box
+                          className="cursor-pointer"
+                          component={"div"}
+                          onClick={() =>
+                            handleDeleteTransaction(transaction.id)
+                          }
+                        >
+                          <EditIcon />
+                        </Box>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <Box
+                          className="cursor-pointer text-red-500"
+                          component={"div"}
+                          onClick={() =>
+                            handleDeleteTransaction(transaction.id)
+                          }
+                        >
+                          <DeleteIcon />
+                        </Box>
+                      </Tooltip>
                     </div>
                   </TableCell>
                 </TableRow>

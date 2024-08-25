@@ -8,13 +8,14 @@ import TransactionList from "./List";
 
 type SearchParamProps = {
   searchParams: {
-    showAddTransactionModal?: boolean;
+    showTransactionModal?: boolean;
+    transactionId?: string;
     refetch?: boolean;
   };
 };
 
 export default function Transactions({
-  searchParams: { showAddTransactionModal, refetch },
+  searchParams: { showTransactionModal, transactionId, refetch },
 }: SearchParamProps) {
   const router = useRouter();
 
@@ -29,13 +30,15 @@ export default function Transactions({
           startIcon={<AddIcon />}
           className="rounded-full"
           onClick={() => {
-            router.push("/transactions?showAddTransactionModal=true");
+            router.push("/transactions?showTransactionModal=true");
           }}
         >
           Add Transaction
         </Button>
       </div>
-      {showAddTransactionModal && <TransactionEntry />}
+      {showTransactionModal && (
+        <TransactionEntry transactionId={transactionId} />
+      )}
     </div>
   );
 }
