@@ -6,6 +6,7 @@ import {
   Chip,
   FormControl,
   FormHelperText,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -165,6 +166,11 @@ export default function TransactionEntry({
                   error={!!formik.errors.amount && formik.touched.amount}
                   helperText={formik.touched.amount ? formik.errors.amount : ""}
                   className="m-0 p-0"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">₹</InputAdornment>
+                    ),
+                  }}
                   InputLabelProps={{ shrink: Boolean(formik.values.amount) }}
                 />
 
