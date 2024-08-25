@@ -39,7 +39,7 @@ import StoreIcon from "@mui/icons-material/Store";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import WorkIcon from "@mui/icons-material/Work";
 
-const categories = [
+export const CATEGORIES = [
   { id: 1, name: "Food & Dining", icon: <RestaurantIcon /> },
   { id: 2, name: "Transportation", icon: <DirectionsCarIcon /> },
   { id: 3, name: "Utilities", icon: <FlashOnIcon /> },

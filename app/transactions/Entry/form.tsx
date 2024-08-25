@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   Chip,
@@ -21,6 +22,7 @@ import { v4 as uuidV4 } from "uuid";
 
 import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
+import { CATEGORIES } from "@/constants/Categories";
 import { UNEXPECTED_ERROR } from "@/constants/Error";
 import { TransactionType } from "@/enums/TransactionType";
 import { cn } from "@/lib/utils";
@@ -52,6 +54,7 @@ export default function TransactionEntry({
       amount: undefined,
       transactionType: TransactionType.Expense,
       transactionDate: dayjs(),
+      categories: [],
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -174,12 +177,17 @@ export default function TransactionEntry({
                       !!formik.errors.transactionType &&
                       formik.touched.transactionType
                     }
+                    sx={{
+                      "& .MuiSelect-select": {
+                        padding: "12px",
+                      },
+                    }}
                     renderValue={(selected) => (
                       <Chip
                         key={selected}
                         label={selected}
                         className={cn(
-                          "text-white font-semibold",
+                          "text-white font-semibold m-0 p-0",
                           selected === TransactionType.Expense
                             ? "bg-red-500"
                             : "bg-green-500"
@@ -200,70 +208,60 @@ export default function TransactionEntry({
                   </FormHelperText>
                 </FormControl>
 
-                <FormControl fullWidth>
-                  <InputLabel required id="entry-transaction-type">
-                    Transaction Type
-                  </InputLabel>
-                  <Select
-                    name="transactionType"
-                    label="Transaction Type"
-                    variant="outlined"
-                    fullWidth
-                    value={formik.values.transactionType}
-                    onChange={formik.handleChange}
-                    error={
-                      !!formik.errors.transactionType &&
-                      formik.touched.transactionType
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateTimePicker
+                    label="Transaction Date"
+                    name="transactionDate"
+                    defaultValue={formik.values.transactionDate}
+                    value={formik.values.transactionDate}
+                    onChange={(date) =>
+                      formik.setFieldValue("transactionDate", date)
                     }
-                    renderValue={(selected) => (
-                      <Chip
-                        key={selected}
-                        label={selected}
-                        className={cn(
-                          "text-white font-semibold",
-                          selected === TransactionType.Expense
-                            ? "bg-red-500"
-                            : "bg-green-500"
-                        )}
-                      />
-                    )}
-                  >
-                    {Object.values(TransactionType).map((type) => (
-                      <MenuItem key={type} value={type}>
-                        {type}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <FormHelperText>
-                    {formik.touched.transactionType
-                      ? formik.errors.transactionType
-                      : ""}
-                  </FormHelperText>
-                </FormControl>
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        required: true,
+                        helperText: formik.touched.transactionDate
+                          ? formik.errors.transactionDate
+                          : "",
+                        error:
+                          !!formik.errors.transactionDate &&
+                          formik.touched.transactionDate,
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
               </div>
 
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateTimePicker
-                  label="Transaction Date"
-                  name="transactionDate"
-                  defaultValue={formik.values.transactionDate}
-                  value={formik.values.transactionDate}
-                  onChange={(date) =>
-                    formik.setFieldValue("transactionDate", date)
-                  }
-                  slotProps={{
-                    textField: {
-                      required: true,
-                      helperText: formik.touched.transactionDate
-                        ? formik.errors.transactionDate
-                        : "",
-                      error:
-                        !!formik.errors.transactionDate &&
-                        formik.touched.transactionDate,
-                    },
-                  }}
-                />
-              </LocalizationProvider>
+              <Autocomplete
+                multiple={true}
+                limitTags={2}
+                options={CATEGORIES}
+                getOptionLabel={(option) => option.name}
+                defaultValue={CATEGORIES.filter((category) =>
+                  formik.values.categories?.includes(category.id)
+                )}
+                value={CATEGORIES.filter((category) =>
+                  formik.values.categories?.includes(category.id)
+                )}
+                onChange={(
+                  event: React.SyntheticEvent,
+                  newValues: typeof CATEGORIES
+                ) => {
+                  formik.setFieldValue(
+                    "categories",
+                    newValues.map((category) => category.id)
+                  );
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Category"
+                    placeholder="Select categories"
+                    name="categories"
+                  />
+                )}
+              />
 
               <div className="flex gap-4">
                 <Button variant="contained" type="submit" disabled={isLoading}>

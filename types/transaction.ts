@@ -8,6 +8,7 @@ export type AddTransactionFormaValues = {
   amount: number | undefined;
   transactionType: TransactionType;
   transactionDate: Dayjs | null;
+  categories?: number[];
 };
 
 export type Transaction = {
@@ -16,4 +17,5 @@ export type Transaction = {
   amount: number;
   transactionType: TransactionType;
   transactionDate: string;
+  categories?: number[];
 };

@@ -13,4 +13,5 @@ export const validationSchema = yup.object().shape({
     .oneOf(Object.values(TransactionType))
     .required("Transaction Type is required"),
   transactionDate: yup.date().required("Transaction Date is required"),
+  categories: yup.array().of(yup.number()).default([]).optional(),
 });
