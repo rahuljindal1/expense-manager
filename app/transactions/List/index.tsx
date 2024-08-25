@@ -19,6 +19,7 @@ import React, { useEffect, useState } from "react";
 
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
+import { UNEXPECTED_ERROR } from "@/constants/Error";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 import { formatToIndianCurrency, truncateString } from "@/lib/utils";
 import { ToastService } from "@/services/ToastService";
@@ -67,7 +68,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
       setTransactions(transactions);
       setTotalCount(totalCount);
     } catch (error: any) {
-      toastService.error(error.message || "Some unexpected error occurred.");
+      toastService.error(error.message || UNEXPECTED_ERROR);
     } finally {
       setIsLoading(false);
     }
