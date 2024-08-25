@@ -19,6 +19,7 @@ import React, { useEffect, useState } from "react";
 
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
+import { CATEGORIES } from "@/constants/Categories";
 import { UNEXPECTED_ERROR } from "@/constants/Error";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 import { cn, formatToIndianCurrency, truncateString } from "@/lib/utils";
@@ -27,12 +28,19 @@ import {
   deleteTransaction,
   listTransactions,
 } from "@/services/transaction.action";
-import { Transaction } from "@/types/transaction";
-import { CATEGORIES } from "@/constants/Categories";
+import { SearchFilters, Transaction } from "@/types/transaction";
+
+import TransactionListFilters from "./Filters";
 
 const toastService = new ToastService();
 
-export default function TransactionList({ refetch }: { refetch?: boolean }) {
+export default function TransactionList({
+  refetch,
+  searchFilters,
+}: {
+  refetch?: boolean;
+  searchFilters: SearchFilters;
+}) {
   const router = useRouter();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -56,7 +64,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
     );
   };
 
-  const fetchTransaction = async (currentPage: number) => {
+  const fetchTransactions = async (currentPage: number) => {
     const limit = ITEMS_PER_PAGE * currentPage;
     const offset = ITEMS_PER_PAGE * (currentPage - 1);
 
@@ -65,6 +73,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
       const { transactions, totalCount } = await listTransactions({
         limit,
         offset,
+        filters: searchFilters,
       });
       setTransactions(transactions);
       setTotalCount(totalCount);
@@ -79,26 +88,27 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
     await deleteTransaction(transactionId);
     toastService.success("Transaction deleted successfully");
 
-    await fetchTransaction(currentPage);
+    await fetchTransactions(currentPage);
   };
 
   useEffect(() => {
     (async () => {
-      await fetchTransaction(currentPage);
+      await fetchTransactions(currentPage);
     })();
   }, [currentPage]);
 
   useEffect(() => {
     if (refetch) {
       (async () => {
-        await fetchTransaction(1);
+        await fetchTransactions(1);
       })();
     }
   }, [refetch]);
 
   return (
-    <div className="space-y-4 flex flex-col justify-center items-center w-[100%] gap-4">
+    <div className="space-y-4 flex flex-col justify-center items-center w-[100%]">
       <InitialLoad />
+      <TransactionListFilters />
       {transactions.length > 0 && (
         <TableContainer component={Paper} className="w-[100%] h-[100%]">
           <Table>

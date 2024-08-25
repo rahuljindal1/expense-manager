@@ -1,5 +1,5 @@
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
-import { Transaction } from "@/types/transaction";
+import { SearchFilters, Transaction } from "@/types/transaction";
 
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
 
@@ -44,14 +44,18 @@ export const editTransaction = async (payload: Transaction) => {
 export const listTransactions = async ({
   limit,
   offset,
+  filters,
 }: {
   limit?: number;
   offset?: number;
+  filters?: SearchFilters;
 }) => {
   const allTransactions =
     ((await localForageService.getItem(
       KEY_NAMES.TRANSACTIONS
     )) as Transaction[]) || [];
+
+  console.log(filters);
 
   const filteredTransactions = allTransactions.slice(offset, limit);
 

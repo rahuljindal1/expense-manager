@@ -19,3 +19,7 @@ export type Transaction = {
   transactionDate: string;
   categories?: number[];
 };
+
+export type SearchFilters = {
+  keywordFields?: string[];
+};
