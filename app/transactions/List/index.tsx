@@ -21,13 +21,14 @@ import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
 import { UNEXPECTED_ERROR } from "@/constants/Error";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
-import { formatToIndianCurrency, truncateString } from "@/lib/utils";
+import { cn, formatToIndianCurrency, truncateString } from "@/lib/utils";
 import { ToastService } from "@/services/ToastService";
 import {
   deleteTransaction,
   listTransactions,
 } from "@/services/transaction.action";
 import { Transaction } from "@/types/transaction";
+import { CATEGORIES } from "@/constants/Categories";
 
 const toastService = new ToastService();
 
@@ -105,6 +106,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
               <TableRow>
                 <TableCell>Date</TableCell>
                 <TableCell>Description</TableCell>
+                <TableCell align="center">Categories</TableCell>
                 <TableCell align="right">Amount</TableCell>
                 <TableCell align="center">Actions</TableCell>
               </TableRow>
@@ -118,7 +120,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                     )}
                   </TableCell>
 
-                  <TableCell className="w-[50%] text-base ">
+                  <TableCell className="w-[35%] text-base">
                     <Tooltip
                       title={transaction.description}
                       placement="bottom-start"
@@ -129,9 +131,35 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                     </Tooltip>
                   </TableCell>
 
+                  <TableCell align="center" className="w-[20%] relative">
+                    <div className="flex justify-center items-center gap-2">
+                      {transaction.categories?.map((categoryId, index) => {
+                        const category = CATEGORIES.find(
+                          (cat) => cat.id === categoryId
+                        );
+
+                        if (!category) {
+                          return <></>;
+                        }
+
+                        return (
+                          <Tooltip title={category.name} key={category.id}>
+                            <div
+                              className={cn(
+                                "flex items-center justify-center w-8 h-8 rounded-full bg-gray-300"
+                              )}
+                            >
+                              <category.icon className="text-gray-700 w-6 h-6" />
+                            </div>
+                          </Tooltip>
+                        );
+                      })}
+                    </div>
+                  </TableCell>
+
                   <TableCell
                     align="right"
-                    className={`font-bold w-[20%] ${
+                    className={`font-bold w-[15%] ${
                       transaction.transactionType === "Expense"
                         ? "text-red-500"
                         : "text-green-500"
@@ -142,7 +170,7 @@ export default function TransactionList({ refetch }: { refetch?: boolean }) {
                       : `+ ₹${formatToIndianCurrency(transaction.amount)}`}
                   </TableCell>
 
-                  <TableCell align="center" className="w-[30%]">
+                  <TableCell align="center" className="w-[10%]">
                     <div className="flex flex-row gap-4rem items-center justify-center gap-4">
                       <Tooltip title="Edit">
                         <Box
