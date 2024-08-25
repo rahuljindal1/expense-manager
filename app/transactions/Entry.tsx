@@ -134,6 +134,7 @@ export default function TransactionEntry({
               className="flex flex-col gap-8"
             >
               <TextField
+                required
                 name="description"
                 label="Description"
                 variant="outlined"
@@ -152,6 +153,7 @@ export default function TransactionEntry({
 
               <div className="flex gap-4 m-0 p-0">
                 <TextField
+                  required
                   name="amount"
                   label="Amount"
                   type="number"
@@ -167,7 +169,7 @@ export default function TransactionEntry({
                 />
 
                 <FormControl fullWidth>
-                  <InputLabel id="entry-transaction-type">
+                  <InputLabel required id="entry-transaction-type">
                     TransactionType
                   </InputLabel>
                   <Select
@@ -219,6 +221,7 @@ export default function TransactionEntry({
                   }
                   slotProps={{
                     textField: {
+                      required: true,
                       helperText: formik.touched.transactionDate
                         ? formik.errors.transactionDate
                         : "",
