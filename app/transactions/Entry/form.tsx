@@ -122,25 +122,22 @@ export default function TransactionEntry({
               onSubmit={formik.handleSubmit}
               className="flex flex-col gap-8"
             >
-              <TextField
-                required
-                name="description"
-                label="Description"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={formik.values.description}
-                onChange={formik.handleChange}
-                error={
-                  !!formik.errors.description && formik.touched.description
-                }
-                helperText={
-                  formik.touched.description ? formik.errors.description : ""
-                }
-                className="m-0 p-0"
-              />
-
-              <div className="flex gap-4 m-0 p-0">
+              <div className="flex gap-4">
+                <TextField
+                  required
+                  name="description"
+                  label="Description"
+                  variant="outlined"
+                  fullWidth
+                  value={formik.values.description}
+                  onChange={formik.handleChange}
+                  error={
+                    !!formik.errors.description && formik.touched.description
+                  }
+                  helperText={
+                    formik.touched.description ? formik.errors.description : ""
+                  }
+                />
                 <TextField
                   required
                   name="amount"
@@ -148,12 +145,10 @@ export default function TransactionEntry({
                   type="number"
                   variant="outlined"
                   fullWidth
-                  margin="normal"
                   value={formik.values.amount}
                   onChange={formik.handleChange}
                   error={!!formik.errors.amount && formik.touched.amount}
                   helperText={formik.touched.amount ? formik.errors.amount : ""}
-                  className="m-0 p-0"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">₹</InputAdornment>
@@ -161,14 +156,57 @@ export default function TransactionEntry({
                   }}
                   InputLabelProps={{ shrink: true }}
                 />
+              </div>
 
+              <div className="flex gap-4">
                 <FormControl fullWidth>
                   <InputLabel required id="entry-transaction-type">
-                    TransactionType
+                    Transaction Type
                   </InputLabel>
                   <Select
                     name="transactionType"
-                    label="transactionType"
+                    label="Transaction Type"
+                    variant="outlined"
+                    fullWidth
+                    value={formik.values.transactionType}
+                    onChange={formik.handleChange}
+                    error={
+                      !!formik.errors.transactionType &&
+                      formik.touched.transactionType
+                    }
+                    renderValue={(selected) => (
+                      <Chip
+                        key={selected}
+                        label={selected}
+                        className={cn(
+                          "text-white font-semibold",
+                          selected === TransactionType.Expense
+                            ? "bg-red-500"
+                            : "bg-green-500"
+                        )}
+                      />
+                    )}
+                  >
+                    {Object.values(TransactionType).map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <FormHelperText>
+                    {formik.touched.transactionType
+                      ? formik.errors.transactionType
+                      : ""}
+                  </FormHelperText>
+                </FormControl>
+
+                <FormControl fullWidth>
+                  <InputLabel required id="entry-transaction-type">
+                    Transaction Type
+                  </InputLabel>
+                  <Select
+                    name="transactionType"
+                    label="Transaction Type"
                     variant="outlined"
                     fullWidth
                     value={formik.values.transactionType}
