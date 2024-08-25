@@ -1,6 +1,16 @@
 import Modal from "@/components/Modal";
 import { TransactionType } from "@/enums/TransactionType";
-import { Box, Button, MenuItem, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import * as yup from "yup";
@@ -18,6 +28,7 @@ import {
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
+import { cn } from "@/lib/utils";
 
 const schema = yup.object().shape({
   description: yup.string().required("Description is required"),
@@ -155,32 +166,46 @@ export default function TransactionEntry({
                   InputLabelProps={{ shrink: Boolean(formik.values.amount) }}
                 />
 
-                <TextField
-                  select
-                  name="transactionType"
-                  label="Transaction Type"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  value={formik.values.transactionType}
-                  onChange={formik.handleChange}
-                  error={
-                    !!formik.errors.transactionType &&
-                    formik.touched.transactionType
-                  }
-                  helperText={
-                    formik.touched.transactionType
+                <FormControl fullWidth>
+                  <InputLabel id="entry-transaction-type">
+                    TransactionType
+                  </InputLabel>
+                  <Select
+                    name="transactionType"
+                    label="transactionType"
+                    variant="outlined"
+                    fullWidth
+                    value={formik.values.transactionType}
+                    onChange={formik.handleChange}
+                    error={
+                      !!formik.errors.transactionType &&
+                      formik.touched.transactionType
+                    }
+                    renderValue={(selected) => (
+                      <Chip
+                        key={selected}
+                        label={selected}
+                        className={cn(
+                          "text-white font-semibold",
+                          selected === TransactionType.Expense
+                            ? "bg-red-500"
+                            : "bg-green-500"
+                        )}
+                      />
+                    )}
+                  >
+                    {Object.values(TransactionType).map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <FormHelperText>
+                    {formik.touched.transactionType
                       ? formik.errors.transactionType
-                      : ""
-                  }
-                  className="m-0 p-0"
-                >
-                  {Object.values(TransactionType).map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                      : ""}
+                  </FormHelperText>
+                </FormControl>
               </div>
 
               <LocalizationProvider dateAdapter={AdapterDayjs}>
