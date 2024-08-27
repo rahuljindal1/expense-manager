@@ -300,12 +300,14 @@ export default function TransactionEntry({
                 }}
                 renderTags={(value, getTagProps) =>
                   value.map((option, index) => (
-                    <Chip
-                      label={option.name}
-                      icon={<option.icon className="text-gray-700 w-5 h-5" />}
-                      {...getTagProps({ index })}
-                      className="mr-2"
-                    />
+                    <Box component={"div"} key={index}>
+                      <Chip
+                        label={option.name}
+                        icon={<option.icon className="text-gray-700 w-5 h-5" />}
+                        {...getTagProps({ index })}
+                        className="mr-2"
+                      />
+                    </Box>
                   ))
                 }
               />

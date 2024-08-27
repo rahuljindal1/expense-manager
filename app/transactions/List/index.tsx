@@ -12,6 +12,7 @@ import {
   TableContainer,
   Paper,
   Tooltip,
+  Chip,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -39,7 +40,7 @@ export default function TransactionList({
   searchFilters,
 }: {
   refetch?: boolean;
-  searchFilters: SearchFilters;
+  searchFilters?: SearchFilters;
 }) {
   const router = useRouter();
 
@@ -110,7 +111,11 @@ export default function TransactionList({
       <InitialLoad />
       <TransactionListFilters />
       {transactions.length > 0 && (
-        <TableContainer component={Paper} className="w-[100%] h-[100%]">
+        <TableContainer
+          component={Paper}
+          className="w-[100%] h-[100%]"
+          sx={{ boxShadow: "0 0 10px rgba(0,0,0,0.2)" }}
+        >
           <Table>
             <TableHead>
               <TableRow>
@@ -153,15 +158,14 @@ export default function TransactionList({
                         }
 
                         return (
-                          <Tooltip title={category.name} key={category.id}>
-                            <div
-                              className={cn(
-                                "flex items-center justify-center w-8 h-8 rounded-full bg-gray-300"
-                              )}
-                            >
-                              <category.icon className="text-gray-700 w-6 h-6" />
-                            </div>
-                          </Tooltip>
+                          <Chip
+                            key={category.id}
+                            label={category.name}
+                            icon={
+                              <category.icon className="text-gray-700 w-4 h-4" />
+                            }
+                            className="text-xs"
+                          />
                         );
                       })}
                     </div>
