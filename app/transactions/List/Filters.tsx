@@ -16,6 +16,7 @@ import {
   Avatar,
   InputAdornment,
   OutlinedInput,
+  Tooltip,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -23,13 +24,14 @@ import { useState } from "react";
 
 import { SearchKeywordField } from "@/enums/TransactionType";
 import { ToastService } from "@/services/ToastService";
+import { SearchOptions } from "@/types/transaction";
 
 const toastService = new ToastService();
 
 export default function TransactionListFilters() {
-  const [searchKeywordIn, setSearchKeywordIn] = useState<string[]>([
-    SearchKeywordField.Category,
-  ]);
+  const [searchOptions, setSearchOptions] = useState<SearchOptions>({
+    keywordFields: Object.values(SearchKeywordField),
+  });
   const [anchorElFilter, setAnchorElFilter] = useState<null | HTMLElement>(
     null
   );
@@ -40,21 +42,27 @@ export default function TransactionListFilters() {
   });
 
   const handleSearchKeywordFieldChange = (field: SearchKeywordField) => {
-    if (searchKeywordIn.includes(field)) {
-      if (searchKeywordIn.length === 1) {
+    if (searchOptions.keywordFields?.includes(field)) {
+      if (searchOptions.keywordFields.length === 1) {
         toastService.error(
           "At least one search keyword should remain selected"
         );
         return;
       }
 
-      setSearchKeywordIn(
-        searchKeywordIn.filter((keywordField) => keywordField !== field)
-      );
+      setSearchOptions({
+        ...searchOptions,
+        keywordFields: searchOptions.keywordFields?.filter(
+          (keywordField) => keywordField !== field
+        ),
+      });
       return;
     }
 
-    setSearchKeywordIn([...searchKeywordIn, field]);
+    setSearchOptions({
+      ...searchOptions,
+      keywordFields: [...(searchOptions.keywordFields || []), field],
+    });
   };
 
   const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -78,6 +86,10 @@ export default function TransactionListFilters() {
 
   const openFilter = Boolean(anchorElFilter);
 
+  const areSearchOptionsProvided =
+    searchOptions.keywordFields?.length &&
+    searchOptions.keywordFields?.length > 0;
+
   return (
     <div className="flex justify-end w-full items-center gap-2">
       <TextField
@@ -93,56 +105,13 @@ export default function TransactionListFilters() {
           "& .MuiOutlinedInput-input": {
             padding: "0.75rem 0.15rem",
           },
+          minWidth: "242px",
         }}
       />
 
-      {/* <Select
-        value={dateRange}
-        onChange={(e) => handleDateRangeChange(e.target.value)}
-        displayEmpty
-        inputProps={{ "aria-label": "Without label" }}
-      >
-        <MenuItem value="" disabled>
-          Select Date Range
-        </MenuItem>
-        <MenuItem value="today">Today</MenuItem>
-        <MenuItem value="thisWeek">This Week</MenuItem>
-        <MenuItem value="thisMonth">This Month</MenuItem>
-        <MenuItem value="custom">Custom</MenuItem>
-      </Select> */}
-
-      {dateRange === "custom" && (
-        <div className="flex gap-2">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="From Date"
-              value={customDateRange.from}
-              onChange={(date) => handleCustomDateChange("from", date)}
-              slotProps={{
-                textField: {
-                  size: "small",
-                },
-              }}
-            />
-          </LocalizationProvider>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="To Date"
-              value={customDateRange.to}
-              onChange={(date) => handleCustomDateChange("to", date)}
-              slotProps={{
-                textField: {
-                  size: "small",
-                },
-              }}
-            />
-          </LocalizationProvider>
-        </div>
-      )}
-
       <IconButton
         onClick={handleFilterClick}
-        className="p-[0.75rem] rounded-[4px]"
+        className="p-[0.75rem] rounded-[4px] relative"
         sx={{
           color: "rgba(25, 118, 210, 1)",
           backgroundColor: "rgba(25, 118, 210, 0.1)",
@@ -154,6 +123,19 @@ export default function TransactionListFilters() {
         }}
       >
         <FilterIcon />
+        {areSearchOptionsProvided && (
+          <Tooltip title="Search Options Applied">
+            <Box
+              component={"div"}
+              className="absolute rounded-full h-3 w-3 top-[-4px] right-[-4px]"
+              sx={{
+                backgroundColor: "rgba(25, 118, 210, 1)",
+                "& :hover": { backgroundColor: "white" },
+              }}
+            />
+          </Tooltip>
+        )}
+        <Box component={"div"} className="absolute" />
       </IconButton>
       <Popover
         open={openFilter}
@@ -167,14 +149,63 @@ export default function TransactionListFilters() {
         <Box
           p={2}
           component={"div"}
-          className="flex flex-col gap-4 min-w-[320px]"
+          className="flex flex-col gap-4 min-w-[360px]"
         >
+          <Box component={"div"}>
+            <div className="mb-2 font-bold">Date Time Range</div>
+            <Box component={"div"} className="flex flex-col gap-4">
+              <Select
+                value={dateRange}
+                onChange={(e) => handleDateRangeChange(e.target.value)}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
+              >
+                <MenuItem value="" disabled>
+                  Select Date Range
+                </MenuItem>
+                <MenuItem value="today">Today</MenuItem>
+                <MenuItem value="thisWeek">This Week</MenuItem>
+                <MenuItem value="thisMonth">This Month</MenuItem>
+                <MenuItem value="custom">Custom</MenuItem>
+              </Select>
+
+              {dateRange === "custom" && (
+                <div className="flex gap-2">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="From Date"
+                      value={customDateRange.from}
+                      onChange={(date) => handleCustomDateChange("from", date)}
+                      slotProps={{
+                        textField: {
+                          size: "small",
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="To Date"
+                      value={customDateRange.to}
+                      onChange={(date) => handleCustomDateChange("to", date)}
+                      slotProps={{
+                        textField: {
+                          size: "small",
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+                </div>
+              )}
+            </Box>
+          </Box>
+
           <Box component={"div"} className="flex flex-col">
             <div className="mb-2 font-bold">Search In</div>
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={searchKeywordIn.includes(
+                  checked={searchOptions.keywordFields?.includes(
                     SearchKeywordField.Category
                   )}
                   onChange={() =>
@@ -187,7 +218,7 @@ export default function TransactionListFilters() {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={searchKeywordIn.includes(
+                  checked={searchOptions.keywordFields?.includes(
                     SearchKeywordField.Description
                   )}
                   onChange={() =>
@@ -200,7 +231,8 @@ export default function TransactionListFilters() {
               label="Description"
             />
           </Box>
-          <Box>
+
+          <Box component={"div"}>
             <div className="mb-2 font-bold">Sort By</div>
             <FormControlLabel control={<Checkbox />} label="Amount" />
           </Box>

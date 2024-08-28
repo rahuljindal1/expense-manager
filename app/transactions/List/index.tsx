@@ -29,7 +29,7 @@ import {
   deleteTransaction,
   listTransactions,
 } from "@/services/transaction.action";
-import { SearchFilters, Transaction } from "@/types/transaction";
+import { SearchOptions, Transaction } from "@/types/transaction";
 
 import TransactionListFilters from "./Filters";
 
@@ -40,7 +40,7 @@ export default function TransactionList({
   searchFilters,
 }: {
   refetch?: boolean;
-  searchFilters?: SearchFilters;
+  searchFilters?: SearchOptions;
 }) {
   const router = useRouter();
 
@@ -114,7 +114,7 @@ export default function TransactionList({
         <TableContainer
           component={Paper}
           className="w-[100%] h-[100%]"
-          sx={{ boxShadow: "0 0 10px rgba(0,0,0,0.2)" }}
+          sx={{ border: "1px solid rgba(0,0,0,0.2)", boxShadow: "none" }}
         >
           <Table>
             <TableHead>

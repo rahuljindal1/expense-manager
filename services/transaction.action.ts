@@ -1,5 +1,5 @@
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
-import { SearchFilters, Transaction } from "@/types/transaction";
+import { SearchOptions, Transaction } from "@/types/transaction";
 
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
 
@@ -48,7 +48,7 @@ export const listTransactions = async ({
 }: {
   limit?: number;
   offset?: number;
-  filters?: SearchFilters;
+  filters?: SearchOptions;
 }) => {
   const allTransactions =
     ((await localForageService.getItem(

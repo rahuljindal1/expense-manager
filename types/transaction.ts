@@ -20,6 +20,6 @@ export type Transaction = {
   categories?: number[];
 };
 
-export type SearchFilters = {
+export type SearchOptions = {
   keywordFields?: string[];
 };
