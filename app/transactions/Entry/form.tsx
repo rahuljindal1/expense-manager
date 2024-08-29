@@ -113,6 +113,10 @@ export default function TransactionEntry({
     }
   };
 
+  const handleClose = () => {
+    router.replace("/transactions");
+  };
+
   useEffect(() => {
     if (transactionId) {
       (async () => await fetchTransaction(transactionId))();
@@ -121,7 +125,7 @@ export default function TransactionEntry({
 
   return (
     <>
-      <Modal title="Add Transaction">
+      <Modal title="Add Transaction" onClose={handleClose}>
         {isFetchingInitialData && (
           <div className="h-[300px] w-[500px] flex justify-center items-center">
             <Loader />
@@ -318,9 +322,7 @@ export default function TransactionEntry({
                 </Button>
                 <Button
                   variant="outlined"
-                  onClick={() => {
-                    router.replace("/transactions");
-                  }}
+                  onClick={handleClose}
                   disabled={isLoading}
                 >
                   Cancel
