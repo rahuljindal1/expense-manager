@@ -117,6 +117,7 @@ export default function TransactionList({
           className="w-[100%] h-[100%] relative"
           sx={{ border: DARK_200, boxShadow: "none" }}
         >
+          <NoTransactionFound />
           <Table>
             <TableHead>
               <TableRow>
@@ -128,7 +129,6 @@ export default function TransactionList({
               </TableRow>
             </TableHead>
             <TableBody>
-              <NoTransactionFound />
               {transactions.map((transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell className="w-[20%]">

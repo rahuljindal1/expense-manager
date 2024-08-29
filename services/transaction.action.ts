@@ -1,8 +1,8 @@
-import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 import { SearchOptions, Transaction } from "@/types/transaction";
 
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
 import { SearchKeywordField } from "@/enums/TransactionType";
+import { CATEGORIES } from "@/constants/Categories";
 
 const localForageService = new LocalForageService();
 
@@ -69,6 +69,17 @@ export const listTransactions = async ({
         ) {
           return true;
         }
+      }
+      if (options.keywordSearchFields.includes(SearchKeywordField.Category)) {
+        const categories = CATEGORIES.filter((category) =>
+          transaction.categories?.includes(category.id)
+        );
+        // console.log({ categories });
+        return categories.some((category) =>
+          category.name
+            .toLowerCase()
+            .includes(options?.keyword?.toLowerCase() as string)
+        );
       }
       return false;
     });
