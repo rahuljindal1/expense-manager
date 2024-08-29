@@ -32,7 +32,7 @@ export default function TransactionListFilters() {
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
     keywordFields: Object.values(SearchKeywordField),
   });
-  const [anchorElFilter, setAnchorElFilter] = useState<null | HTMLElement>(
+  const [anchorElSearch, setAnchorElSearch] = useState<null | HTMLElement>(
     null
   );
   const [dateRange, setDateRange] = useState("");
@@ -65,12 +65,12 @@ export default function TransactionListFilters() {
     });
   };
 
-  const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElFilter(event.currentTarget);
+  const handleSearchOptionClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElSearch(event.currentTarget);
   };
 
   const handleClose = () => {
-    setAnchorElFilter(null);
+    setAnchorElSearch(null);
   };
 
   const handleDateRangeChange = (value: string) => {
@@ -84,11 +84,141 @@ export default function TransactionListFilters() {
     setCustomDateRange({ ...customDateRange, [key]: date });
   };
 
-  const openFilter = Boolean(anchorElFilter);
+  const openFilter = Boolean(anchorElSearch);
 
   const areSearchOptionsProvided =
     searchOptions.keywordFields?.length &&
     searchOptions.keywordFields?.length > 0;
+
+  const OptionProviderIndicator = () => {
+    if (!areSearchOptionsProvided) {
+      return <></>;
+    }
+
+    return (
+      <Tooltip title="Search Options Applied">
+        <Box
+          component={"div"}
+          className="absolute rounded-full h-3 w-3 top-[-4px] right-[-4px]"
+          sx={{
+            backgroundColor: "rgba(25, 118, 210, 1)",
+            "& :hover": { backgroundColor: "white" },
+          }}
+        />
+      </Tooltip>
+    );
+  };
+
+  const SearchOptionPopover = () => (
+    <Popover
+      open={openFilter}
+      anchorEl={anchorElSearch}
+      onClose={handleClose}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "left",
+      }}
+    >
+      <Box
+        p={2}
+        component={"div"}
+        className="flex flex-col gap-4 min-w-[360px]"
+      >
+        <Box component={"div"}>
+          <div className="mb-2 font-bold">Date Time Range</div>
+          <Box component={"div"} className="flex flex-col gap-4">
+            <Select
+              value={dateRange}
+              onChange={(e) => handleDateRangeChange(e.target.value)}
+              displayEmpty
+              inputProps={{ "aria-label": "Without label" }}
+            >
+              <MenuItem value="" disabled>
+                Select Date Range
+              </MenuItem>
+              <MenuItem value="today">Today</MenuItem>
+              <MenuItem value="thisWeek">This Week</MenuItem>
+              <MenuItem value="thisMonth">This Month</MenuItem>
+              <MenuItem value="custom">Custom</MenuItem>
+            </Select>
+
+            {dateRange === "custom" && (
+              <div className="flex gap-2">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="From Date"
+                    value={customDateRange.from}
+                    onChange={(date) => handleCustomDateChange("from", date)}
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="To Date"
+                    value={customDateRange.to}
+                    onChange={(date) => handleCustomDateChange("to", date)}
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </div>
+            )}
+          </Box>
+        </Box>
+
+        <Box component={"div"} className="flex flex-col">
+          <div className="mb-2 font-bold">Search In</div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={searchOptions.keywordFields?.includes(
+                  SearchKeywordField.Category
+                )}
+                onChange={() =>
+                  handleSearchKeywordFieldChange(SearchKeywordField.Category)
+                }
+              />
+            }
+            label="Category"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={searchOptions.keywordFields?.includes(
+                  SearchKeywordField.Description
+                )}
+                onChange={() =>
+                  handleSearchKeywordFieldChange(SearchKeywordField.Description)
+                }
+              />
+            }
+            label="Description"
+          />
+        </Box>
+
+        <Box component={"div"}>
+          <div className="mb-2 font-bold">Sort By</div>
+          <FormControlLabel control={<Checkbox />} label="Amount" />
+        </Box>
+      </Box>
+
+      <Divider orientation="horizontal" />
+
+      <Box component={"div"} p={2} className="flex justify-end gap-4">
+        <Button variant="contained" color="primary">
+          Save
+        </Button>
+        <Button variant="outlined">Reset</Button>
+      </Box>
+    </Popover>
+  );
 
   return (
     <div className="flex justify-end w-full items-center gap-2">
@@ -105,12 +235,12 @@ export default function TransactionListFilters() {
           "& .MuiOutlinedInput-input": {
             padding: "0.75rem 0.15rem",
           },
-          minWidth: "242px",
+          minWidth: "260px",
         }}
       />
 
       <IconButton
-        onClick={handleFilterClick}
+        onClick={handleSearchOptionClick}
         className="p-[0.75rem] rounded-[4px] relative"
         sx={{
           color: "rgba(25, 118, 210, 1)",
@@ -123,130 +253,10 @@ export default function TransactionListFilters() {
         }}
       >
         <FilterIcon />
-        {areSearchOptionsProvided && (
-          <Tooltip title="Search Options Applied">
-            <Box
-              component={"div"}
-              className="absolute rounded-full h-3 w-3 top-[-4px] right-[-4px]"
-              sx={{
-                backgroundColor: "rgba(25, 118, 210, 1)",
-                "& :hover": { backgroundColor: "white" },
-              }}
-            />
-          </Tooltip>
-        )}
-        <Box component={"div"} className="absolute" />
+        <OptionProviderIndicator />
       </IconButton>
-      <Popover
-        open={openFilter}
-        anchorEl={anchorElFilter}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-      >
-        <Box
-          p={2}
-          component={"div"}
-          className="flex flex-col gap-4 min-w-[360px]"
-        >
-          <Box component={"div"}>
-            <div className="mb-2 font-bold">Date Time Range</div>
-            <Box component={"div"} className="flex flex-col gap-4">
-              <Select
-                value={dateRange}
-                onChange={(e) => handleDateRangeChange(e.target.value)}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-              >
-                <MenuItem value="" disabled>
-                  Select Date Range
-                </MenuItem>
-                <MenuItem value="today">Today</MenuItem>
-                <MenuItem value="thisWeek">This Week</MenuItem>
-                <MenuItem value="thisMonth">This Month</MenuItem>
-                <MenuItem value="custom">Custom</MenuItem>
-              </Select>
 
-              {dateRange === "custom" && (
-                <div className="flex gap-2">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label="From Date"
-                      value={customDateRange.from}
-                      onChange={(date) => handleCustomDateChange("from", date)}
-                      slotProps={{
-                        textField: {
-                          size: "small",
-                        },
-                      }}
-                    />
-                  </LocalizationProvider>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label="To Date"
-                      value={customDateRange.to}
-                      onChange={(date) => handleCustomDateChange("to", date)}
-                      slotProps={{
-                        textField: {
-                          size: "small",
-                        },
-                      }}
-                    />
-                  </LocalizationProvider>
-                </div>
-              )}
-            </Box>
-          </Box>
-
-          <Box component={"div"} className="flex flex-col">
-            <div className="mb-2 font-bold">Search In</div>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={searchOptions.keywordFields?.includes(
-                    SearchKeywordField.Category
-                  )}
-                  onChange={() =>
-                    handleSearchKeywordFieldChange(SearchKeywordField.Category)
-                  }
-                />
-              }
-              label="Category"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={searchOptions.keywordFields?.includes(
-                    SearchKeywordField.Description
-                  )}
-                  onChange={() =>
-                    handleSearchKeywordFieldChange(
-                      SearchKeywordField.Description
-                    )
-                  }
-                />
-              }
-              label="Description"
-            />
-          </Box>
-
-          <Box component={"div"}>
-            <div className="mb-2 font-bold">Sort By</div>
-            <FormControlLabel control={<Checkbox />} label="Amount" />
-          </Box>
-        </Box>
-
-        <Divider orientation="horizontal" />
-
-        <Box component={"div"} p={2} className="flex justify-end gap-4">
-          <Button variant="contained" color="primary">
-            Save
-          </Button>
-          <Button variant="outlined">Reset</Button>
-        </Box>
-      </Popover>
+      <SearchOptionPopover />
     </div>
   );
 }
