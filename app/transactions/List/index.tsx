@@ -23,6 +23,7 @@ import Pagination from "@/components/Pagination";
 import { CATEGORIES } from "@/constants/Categories";
 import { DARK_200 } from "@/constants/Colors";
 import { UNEXPECTED_ERROR } from "@/constants/Error";
+import { TRANSACTION_URL } from "@/constants/RedirectionUrl";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 import { cn, formatToIndianCurrency, truncateString } from "@/lib/utils";
 import { ToastService } from "@/services/ToastService";
@@ -37,10 +38,8 @@ import TransactionListFilters from "./Filters";
 const toastService = new ToastService();
 
 export default function TransactionList({
-  refetch,
   appliedSearchOptions,
 }: {
-  refetch?: boolean;
   appliedSearchOptions?: SearchOptions;
 }) {
   const router = useRouter();
@@ -100,12 +99,10 @@ export default function TransactionList({
   }, [currentPage]);
 
   useEffect(() => {
-    if (refetch) {
-      (async () => {
-        await fetchTransactions(1);
-      })();
-    }
-  }, [refetch]);
+    (async () => {
+      await fetchTransactions(1);
+    })();
+  }, [JSON.stringify(appliedSearchOptions)]);
 
   return (
     <div className="space-y-4 flex flex-col justify-center items-center w-[100%]">
@@ -194,7 +191,7 @@ export default function TransactionList({
                             component={"div"}
                             onClick={() =>
                               router.push(
-                                `/transactions?showTransactionModal=true&transactionId=${transaction.id}`
+                                `${TRANSACTION_URL}?showTransactionModal=true&transactionId=${transaction.id}`
                               )
                             }
                           >

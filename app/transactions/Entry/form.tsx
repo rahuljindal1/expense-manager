@@ -24,6 +24,7 @@ import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
 import { CATEGORIES } from "@/constants/Categories";
 import { UNEXPECTED_ERROR } from "@/constants/Error";
+import { TRANSACTION_WITH_SEARCH_PARAMS } from "@/constants/RedirectionUrl";
 import { TransactionType } from "@/enums/TransactionType";
 import { cn } from "@/lib/utils";
 import { ToastService } from "@/services/ToastService";
@@ -78,7 +79,7 @@ export default function TransactionEntry({
           });
           toastService.success("Transaction added successfully");
         }
-        router.replace("/transactions?refetch=true");
+        router.replace(TRANSACTION_WITH_SEARCH_PARAMS);
       } catch (error: any) {
         toastService.error(error.message || UNEXPECTED_ERROR);
       } finally {
@@ -106,7 +107,7 @@ export default function TransactionEntry({
       );
     } catch (error: any) {
       toastService.error(error.message || UNEXPECTED_ERROR);
-      router.replace("/transactions");
+      router.replace(TRANSACTION_WITH_SEARCH_PARAMS);
     } finally {
       setIsFetchingInitialData(false);
       setIsLoading(false);
@@ -114,7 +115,7 @@ export default function TransactionEntry({
   };
 
   const handleClose = () => {
-    router.replace("/transactions");
+    router.replace(TRANSACTION_WITH_SEARCH_PARAMS);
   };
 
   useEffect(() => {

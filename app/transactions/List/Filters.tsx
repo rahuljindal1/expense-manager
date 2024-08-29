@@ -21,7 +21,7 @@ import {
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { PRIMARY_BLUE, PRIMARY_BLUE_100 } from "@/constants/Colors";
 import { SearchKeywordField } from "@/enums/TransactionType";
@@ -89,12 +89,6 @@ export default function TransactionListFilters() {
   const handleCustomDateChange = (key: "from" | "to", date: any) => {
     setCustomDateRange({ ...customDateRange, [key]: date });
   };
-
-  console.log({
-    // field,
-    // kf: searchOptions.keywordSearchFields,
-    searchOptions,
-  });
 
   const areSearchOptionsProvided =
     searchOptions.keywordSearchFields?.length &&
