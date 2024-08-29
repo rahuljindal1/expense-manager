@@ -15,3 +15,15 @@ export const formatToIndianCurrency = (amount: number) => {
     maximumFractionDigits: 2,
   });
 };
+
+export const debounce = (fn: Function, durationInMilliSeconds = 300) => {
+  let timer: NodeJS.Timeout | undefined;
+  return function (...args: any[]) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(null, args);
+    }, durationInMilliSeconds);
+  };
+};

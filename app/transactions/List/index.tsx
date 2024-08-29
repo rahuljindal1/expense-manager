@@ -49,18 +49,22 @@ export default function TransactionList({
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
-  const InitialLoad = () => {
+  const NoTransactionFound = () => {
     if (transactions.length > 0) {
-      return null;
-    }
-
-    if (isLoading) {
-      return <Loader />;
+      return <></>;
     }
 
     return (
-      <Box component={"p"}>
-        {"Oops! No transactions found. Let's try adding one"}.
+      <Box
+        component="div"
+        className="absolute top-1/2 w-full flex justify-center items-center transform -translate-y-1/2"
+      >
+        <Box
+          component="p"
+          className="text-center text-gray-500 text-lg font-medium"
+        >
+          Oops! No transactions found
+        </Box>
       </Box>
     );
   };
@@ -106,124 +110,124 @@ export default function TransactionList({
 
   return (
     <div className="space-y-4 flex flex-col justify-center items-center w-[100%]">
-      <InitialLoad />
-      {transactions.length > 0 && (
-        <>
-          <TransactionListFilters />
-          <TableContainer
-            component={Paper}
-            className="w-[100%] h-[100%]"
-            sx={{ border: DARK_200, boxShadow: "none" }}
-          >
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell align="center">Categories</TableCell>
-                  <TableCell align="right">Amount</TableCell>
-                  <TableCell align="center">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {transactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
-                    <TableCell className="w-[20%]">
-                      {dayjs(transaction.transactionDate).format(
-                        "D MMM YYYY, h:mm A"
-                      )}
-                    </TableCell>
+      <>
+        <TransactionListFilters />
+        <TableContainer
+          component={Paper}
+          className="w-[100%] h-[100%] relative"
+          sx={{ border: DARK_200, boxShadow: "none" }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Date</TableCell>
+                <TableCell>Description</TableCell>
+                <TableCell align="center">Categories</TableCell>
+                <TableCell align="right">Amount</TableCell>
+                <TableCell align="center">Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <NoTransactionFound />
+              {transactions.map((transaction) => (
+                <TableRow key={transaction.id}>
+                  <TableCell className="w-[20%]">
+                    {dayjs(transaction.transactionDate).format(
+                      "D MMM YYYY, h:mm A"
+                    )}
+                  </TableCell>
 
-                    <TableCell className="w-[35%] text-base">
-                      <Tooltip
-                        title={transaction.description}
-                        placement="bottom-start"
-                      >
-                        <Box component={"p"} className="font-semibold">
-                          {truncateString(transaction.description, 60)}
+                  <TableCell className="w-[35%] text-base">
+                    <Tooltip
+                      title={transaction.description}
+                      placement="bottom-start"
+                    >
+                      <Box component={"p"} className="font-semibold">
+                        {truncateString(transaction.description, 60)}
+                      </Box>
+                    </Tooltip>
+                  </TableCell>
+
+                  <TableCell align="center" className="w-[20%] relative">
+                    <div className="flex justify-center items-center gap-2">
+                      {transaction.categories?.map((categoryId, index) => {
+                        const category = CATEGORIES.find(
+                          (cat) => cat.id === categoryId
+                        );
+
+                        if (!category) {
+                          return <></>;
+                        }
+
+                        return (
+                          <Chip
+                            key={category.id}
+                            label={category.name}
+                            icon={
+                              <category.icon className="text-gray-700 w-4 h-4" />
+                            }
+                            className="text-xs"
+                          />
+                        );
+                      })}
+                    </div>
+                  </TableCell>
+
+                  <TableCell
+                    align="right"
+                    className={`font-bold w-[15%] ${
+                      transaction.transactionType === "Expense"
+                        ? "text-red-500"
+                        : "text-green-500"
+                    }`}
+                  >
+                    {transaction.transactionType === "Expense"
+                      ? `- ₹${formatToIndianCurrency(transaction.amount)}`
+                      : `+ ₹${formatToIndianCurrency(transaction.amount)}`}
+                  </TableCell>
+
+                  <TableCell align="center" className="w-[10%]">
+                    <div className="flex flex-row gap-4rem items-center justify-center gap-4">
+                      <Tooltip title="Edit">
+                        <Box
+                          className="cursor-pointer"
+                          component={"div"}
+                          onClick={() =>
+                            router.push(
+                              `${TRANSACTION_URL}?showTransactionModal=true&transactionId=${transaction.id}`
+                            )
+                          }
+                        >
+                          <EditIcon />
                         </Box>
                       </Tooltip>
-                    </TableCell>
-
-                    <TableCell align="center" className="w-[20%] relative">
-                      <div className="flex justify-center items-center gap-2">
-                        {transaction.categories?.map((categoryId, index) => {
-                          const category = CATEGORIES.find(
-                            (cat) => cat.id === categoryId
-                          );
-
-                          if (!category) {
-                            return <></>;
+                      <Tooltip title="Delete">
+                        <Box
+                          className="cursor-pointer text-red-500"
+                          component={"div"}
+                          onClick={() =>
+                            handleDeleteTransaction(transaction.id)
                           }
+                        >
+                          <DeleteIcon />
+                        </Box>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-                          return (
-                            <Chip
-                              key={category.id}
-                              label={category.name}
-                              icon={
-                                <category.icon className="text-gray-700 w-4 h-4" />
-                              }
-                              className="text-xs"
-                            />
-                          );
-                        })}
-                      </div>
-                    </TableCell>
-
-                    <TableCell
-                      align="right"
-                      className={`font-bold w-[15%] ${
-                        transaction.transactionType === "Expense"
-                          ? "text-red-500"
-                          : "text-green-500"
-                      }`}
-                    >
-                      {transaction.transactionType === "Expense"
-                        ? `- ₹${formatToIndianCurrency(transaction.amount)}`
-                        : `+ ₹${formatToIndianCurrency(transaction.amount)}`}
-                    </TableCell>
-
-                    <TableCell align="center" className="w-[10%]">
-                      <div className="flex flex-row gap-4rem items-center justify-center gap-4">
-                        <Tooltip title="Edit">
-                          <Box
-                            className="cursor-pointer"
-                            component={"div"}
-                            onClick={() =>
-                              router.push(
-                                `${TRANSACTION_URL}?showTransactionModal=true&transactionId=${transaction.id}`
-                              )
-                            }
-                          >
-                            <EditIcon />
-                          </Box>
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                          <Box
-                            className="cursor-pointer text-red-500"
-                            component={"div"}
-                            onClick={() =>
-                              handleDeleteTransaction(transaction.id)
-                            }
-                          >
-                            <DeleteIcon />
-                          </Box>
-                        </Tooltip>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      )}
-
-      <Pagination
-        currentPage={currentPage}
-        totalCount={Number(totalCount)}
-        onPageChange={setCurrentPage}
-      />
+        <Pagination
+          currentPage={currentPage}
+          totalCount={Number(totalCount)}
+          onPageChange={setCurrentPage}
+        />
+      </>
+      {/* {transactions.length > 0 && (
+      )} */}
     </div>
   );
 }

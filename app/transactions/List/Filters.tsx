@@ -13,20 +13,20 @@ import {
   MenuItem,
   Select,
   TextField,
-  Avatar,
   InputAdornment,
-  OutlinedInput,
   Tooltip,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 
 import { PRIMARY_BLUE, PRIMARY_BLUE_100 } from "@/constants/Colors";
 import { SearchKeywordField } from "@/enums/TransactionType";
 import { ToastService } from "@/services/ToastService";
 import { SearchOptions } from "@/types/transaction";
+import { debounce } from "@/lib/utils";
+import { TRANSACTION_URL } from "@/constants/RedirectionUrl";
 
 const toastService = new ToastService();
 
@@ -227,6 +227,22 @@ export default function TransactionListFilters() {
     </Popover>
   );
 
+  const onKeywordSearch = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const trimmedKeyword = e.target.value.trim();
+    const newSearchOptions = {
+      ...searchOptions,
+      keyword: trimmedKeyword,
+    };
+    setSearchOptions(newSearchOptions);
+    router.push(
+      `${TRANSACTION_URL}?appliedSearchOptions=${JSON.stringify(
+        newSearchOptions
+      )}`
+    );
+  };
+
   useEffect(() => {
     router.push(
       `transactions?appliedSearchOptions=${JSON.stringify(searchOptions)}`
@@ -237,6 +253,7 @@ export default function TransactionListFilters() {
     <div className="flex justify-end w-full items-center gap-2">
       <TextField
         placeholder="Search"
+        onChange={debounce(onKeywordSearch)}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

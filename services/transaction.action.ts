@@ -2,6 +2,7 @@ import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 import { SearchOptions, Transaction } from "@/types/transaction";
 
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
+import { SearchKeywordField } from "@/enums/TransactionType";
 
 const localForageService = new LocalForageService();
 
@@ -55,9 +56,26 @@ export const listTransactions = async ({
       KEY_NAMES.TRANSACTIONS
     )) as Transaction[]) || [];
 
-  console.log(options);
+  let filteredTransactions = allTransactions.slice(offset, limit);
+  if (options?.keyword !== undefined) {
+    filteredTransactions = filteredTransactions.filter((transaction) => {
+      if (
+        options.keywordSearchFields.includes(SearchKeywordField.Description)
+      ) {
+        if (
+          transaction.description
+            .toLowerCase()
+            .includes(options?.keyword?.toLowerCase() as string)
+        ) {
+          return true;
+        }
+      }
+      return false;
+    });
+  }
 
-  const filteredTransactions = allTransactions.slice(offset, limit);
+  console.log({ options });
+  console.log({ filteredTransactions });
 
   return {
     transactions: filteredTransactions,

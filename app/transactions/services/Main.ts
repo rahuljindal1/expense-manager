@@ -8,7 +8,7 @@ export class TransactionService {
     try {
       const parsedOptions = JSON.parse(appliedSearchOptions || "{}") as any;
 
-      if (parsedOptions.keyword) {
+      if (parsedOptions.keyword !== undefined) {
         searchOptions.keyword = parsedOptions.keyword.trim();
       }
 
