@@ -21,5 +21,6 @@ export type Transaction = {
 };
 
 export type SearchOptions = {
-  keywordFields?: string[];
+  keyword?: string;
+  keywordSearchFields: string[];
 };

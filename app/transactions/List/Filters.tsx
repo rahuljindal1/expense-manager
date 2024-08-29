@@ -20,7 +20,8 @@ import {
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { PRIMARY_BLUE, PRIMARY_BLUE_100 } from "@/constants/Colors";
 import { SearchKeywordField } from "@/enums/TransactionType";
@@ -30,8 +31,9 @@ import { SearchOptions } from "@/types/transaction";
 const toastService = new ToastService();
 
 export default function TransactionListFilters() {
+  const router = useRouter();
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
-    keywordFields: Object.values(SearchKeywordField),
+    keywordSearchFields: Object.values(SearchKeywordField),
   });
   const [anchorElSearch, setAnchorElSearch] = useState<null | HTMLElement>(
     null
@@ -43,8 +45,8 @@ export default function TransactionListFilters() {
   });
 
   const handleSearchKeywordFieldChange = (field: SearchKeywordField) => {
-    if (searchOptions.keywordFields?.includes(field)) {
-      if (searchOptions.keywordFields.length === 1) {
+    if (searchOptions.keywordSearchFields?.includes(field)) {
+      if (searchOptions.keywordSearchFields.length === 1) {
         toastService.error(
           "At least one search keyword should remain selected"
         );
@@ -53,7 +55,7 @@ export default function TransactionListFilters() {
 
       setSearchOptions({
         ...searchOptions,
-        keywordFields: searchOptions.keywordFields?.filter(
+        keywordSearchFields: searchOptions.keywordSearchFields?.filter(
           (keywordField) => keywordField !== field
         ),
       });
@@ -62,7 +64,10 @@ export default function TransactionListFilters() {
 
     setSearchOptions({
       ...searchOptions,
-      keywordFields: [...(searchOptions.keywordFields || []), field],
+      keywordSearchFields: [
+        ...(searchOptions.keywordSearchFields || []),
+        field,
+      ],
     });
   };
 
@@ -85,11 +90,15 @@ export default function TransactionListFilters() {
     setCustomDateRange({ ...customDateRange, [key]: date });
   };
 
-  const openFilter = Boolean(anchorElSearch);
+  console.log({
+    // field,
+    // kf: searchOptions.keywordSearchFields,
+    searchOptions,
+  });
 
   const areSearchOptionsProvided =
-    searchOptions.keywordFields?.length &&
-    searchOptions.keywordFields?.length > 0;
+    searchOptions.keywordSearchFields?.length &&
+    searchOptions.keywordSearchFields?.length > 0;
 
   const OptionProviderIndicator = () => {
     if (!areSearchOptionsProvided) {
@@ -112,7 +121,7 @@ export default function TransactionListFilters() {
 
   const SearchOptionPopover = () => (
     <Popover
-      open={openFilter}
+      open={Boolean(anchorElSearch)}
       anchorEl={anchorElSearch}
       onClose={handleClose}
       anchorOrigin={{
@@ -176,32 +185,24 @@ export default function TransactionListFilters() {
 
         <Box component={"div"} className="flex flex-col">
           <div className="mb-2 font-bold">Search In</div>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={searchOptions.keywordFields?.includes(
-                  SearchKeywordField.Category
-                )}
-                onChange={() =>
-                  handleSearchKeywordFieldChange(SearchKeywordField.Category)
-                }
-              />
-            }
-            label="Category"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={searchOptions.keywordFields?.includes(
-                  SearchKeywordField.Description
-                )}
-                onChange={() =>
-                  handleSearchKeywordFieldChange(SearchKeywordField.Description)
-                }
-              />
-            }
-            label="Description"
-          />
+          {Object.keys(SearchKeywordField).map((keywordField) => (
+            <FormControlLabel
+              key={keywordField}
+              control={
+                <Checkbox
+                  checked={searchOptions.keywordSearchFields?.includes(
+                    SearchKeywordField[keywordField as SearchKeywordField]
+                  )}
+                  onChange={() =>
+                    handleSearchKeywordFieldChange(
+                      SearchKeywordField[keywordField as SearchKeywordField]
+                    )
+                  }
+                />
+              }
+              label={keywordField}
+            />
+          ))}
         </Box>
 
         <Box component={"div"}>
@@ -213,13 +214,30 @@ export default function TransactionListFilters() {
       <Divider orientation="horizontal" />
 
       <Box component={"div"} p={2} className="flex justify-end gap-4">
-        <Button variant="contained" color="primary">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            router.push(
+              `transactions?appliedSearchOptions=${JSON.stringify(
+                searchOptions
+              )}`
+            );
+            handleClose();
+          }}
+        >
           Save
         </Button>
         <Button variant="outlined">Reset</Button>
       </Box>
     </Popover>
   );
+
+  useEffect(() => {
+    router.push(
+      `transactions?appliedSearchOptions=${JSON.stringify(searchOptions)}`
+    );
+  }, []);
 
   return (
     <div className="flex justify-end w-full items-center gap-2">

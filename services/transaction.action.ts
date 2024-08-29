@@ -44,18 +44,18 @@ export const editTransaction = async (payload: Transaction) => {
 export const listTransactions = async ({
   limit,
   offset,
-  filters,
+  options,
 }: {
   limit?: number;
   offset?: number;
-  filters?: SearchOptions;
+  options?: SearchOptions;
 }) => {
   const allTransactions =
     ((await localForageService.getItem(
       KEY_NAMES.TRANSACTIONS
     )) as Transaction[]) || [];
 
-  console.log(filters);
+  console.log(options);
 
   const filteredTransactions = allTransactions.slice(offset, limit);
 
