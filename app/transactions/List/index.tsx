@@ -21,6 +21,7 @@ import React, { useEffect, useState } from "react";
 import Loader from "@/components/Loader";
 import Pagination from "@/components/Pagination";
 import { CATEGORIES } from "@/constants/Categories";
+import { DARK_200 } from "@/constants/Colors";
 import { UNEXPECTED_ERROR } from "@/constants/Error";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
 import { cn, formatToIndianCurrency, truncateString } from "@/lib/utils";
@@ -114,7 +115,7 @@ export default function TransactionList({
         <TableContainer
           component={Paper}
           className="w-[100%] h-[100%]"
-          sx={{ border: "1px solid rgba(0,0,0,0.2)", boxShadow: "none" }}
+          sx={{ border: DARK_200, boxShadow: "none" }}
         >
           <Table>
             <TableHead>

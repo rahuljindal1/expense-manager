@@ -22,6 +22,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useState } from "react";
 
+import { PRIMARY_BLUE, PRIMARY_BLUE_100 } from "@/constants/Colors";
 import { SearchKeywordField } from "@/enums/TransactionType";
 import { ToastService } from "@/services/ToastService";
 import { SearchOptions } from "@/types/transaction";
@@ -101,7 +102,7 @@ export default function TransactionListFilters() {
           component={"div"}
           className="absolute rounded-full h-3 w-3 top-[-4px] right-[-4px]"
           sx={{
-            backgroundColor: "rgba(25, 118, 210, 1)",
+            backgroundColor: PRIMARY_BLUE,
             "& :hover": { backgroundColor: "white" },
           }}
         />
@@ -243,12 +244,12 @@ export default function TransactionListFilters() {
         onClick={handleSearchOptionClick}
         className="p-[0.75rem] rounded-[4px] relative"
         sx={{
-          color: "rgba(25, 118, 210, 1)",
-          backgroundColor: "rgba(25, 118, 210, 0.1)",
+          color: PRIMARY_BLUE,
+          backgroundColor: PRIMARY_BLUE_100,
 
           "&:hover": {
             color: "white",
-            backgroundColor: "rgba(25, 118, 210, 1)",
+            backgroundColor: PRIMARY_BLUE,
           },
         }}
       >
