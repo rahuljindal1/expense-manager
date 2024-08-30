@@ -1,8 +1,8 @@
+import { CATEGORIES } from "@/constants/Categories";
+import { SearchKeywordField } from "@/enums/TransactionType";
 import { SearchOptions, Transaction } from "@/types/transaction";
 
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
-import { SearchKeywordField } from "@/enums/TransactionType";
-import { CATEGORIES } from "@/constants/Categories";
 
 const localForageService = new LocalForageService();
 
@@ -47,16 +47,24 @@ export const listTransactions = async ({
   offset,
   options,
 }: {
+  options: SearchOptions;
   limit?: number;
   offset?: number;
-  options?: SearchOptions;
 }) => {
   const allTransactions =
     ((await localForageService.getItem(
       KEY_NAMES.TRANSACTIONS
     )) as Transaction[]) || [];
 
-  let filteredTransactions = allTransactions.slice(offset, limit);
+  let filteredTransactions = allTransactions.filter(
+    (transaction) =>
+      new Date(transaction.transactionDate).getTime() >=
+        options?.dateRange.fromDate.getTime() &&
+      new Date(transaction.transactionDate).getTime() <=
+        options?.dateRange.toDate.getTime()
+  );
+
+  filteredTransactions = filteredTransactions.slice(offset, limit);
   if (options?.keyword !== undefined) {
     filteredTransactions = filteredTransactions.filter((transaction) => {
       if (
@@ -74,7 +82,6 @@ export const listTransactions = async ({
         const categories = CATEGORIES.filter((category) =>
           transaction.categories?.includes(category.id)
         );
-        // console.log({ categories });
         return categories.some((category) =>
           category.name
             .toLowerCase()
@@ -84,9 +91,6 @@ export const listTransactions = async ({
       return false;
     });
   }
-
-  console.log({ options });
-  console.log({ filteredTransactions });
 
   return {
     transactions: filteredTransactions,

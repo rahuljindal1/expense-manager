@@ -40,7 +40,7 @@ const toastService = new ToastService();
 export default function TransactionList({
   appliedSearchOptions,
 }: {
-  appliedSearchOptions?: SearchOptions;
+  appliedSearchOptions: SearchOptions;
 }) {
   const router = useRouter();
 
@@ -111,7 +111,7 @@ export default function TransactionList({
   return (
     <div className="space-y-4 flex flex-col justify-center items-center w-[100%]">
       <>
-        <TransactionListFilters />
+        <TransactionListFilters defaultSearchOptions={appliedSearchOptions} />
         <TableContainer
           component={Paper}
           className="w-[100%] h-[100%] relative"

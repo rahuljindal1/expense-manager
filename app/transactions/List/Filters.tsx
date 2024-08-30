@@ -16,29 +16,72 @@ import {
   InputAdornment,
   Tooltip,
 } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  DatePicker,
+  DateTimePicker,
+  LocalizationProvider,
+} from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import {
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
+import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import React, { ChangeEvent, useEffect, useState } from "react";
 
 import { PRIMARY_BLUE, PRIMARY_BLUE_100 } from "@/constants/Colors";
+import {
+  TRANSACTION_URL,
+  TRANSACTION_WITH_SEARCH_PARAMS,
+} from "@/constants/RedirectionUrl";
 import { SearchKeywordField } from "@/enums/TransactionType";
+import { debounce } from "@/lib/utils";
 import { ToastService } from "@/services/ToastService";
 import { SearchOptions } from "@/types/transaction";
-import { debounce } from "@/lib/utils";
-import { TRANSACTION_URL } from "@/constants/RedirectionUrl";
 
 const toastService = new ToastService();
 
-export default function TransactionListFilters() {
+enum DateRange {
+  "Today" = "Today",
+  "This_Month" = "This_Month",
+  "This_Week" = "This_Week",
+  "Custom" = "Custom",
+}
+
+const getMappedDateRange = {
+  [DateRange.Today]: {
+    fromDate: startOfDay(new Date()),
+    toDate: endOfDay(new Date()),
+  },
+  [DateRange.This_Week]: {
+    fromDate: startOfWeek(new Date()),
+    toDate: endOfWeek(new Date()),
+  },
+  [DateRange.This_Month]: {
+    fromDate: startOfMonth(new Date()),
+    toDate: endOfMonth(new Date()),
+  },
+};
+
+export default function TransactionListFilters({
+  defaultSearchOptions,
+}: {
+  defaultSearchOptions: SearchOptions;
+}) {
   const router = useRouter();
-  const [searchOptions, setSearchOptions] = useState<SearchOptions>({
-    keywordSearchFields: Object.values(SearchKeywordField),
-  });
+  const [searchOptions, setSearchOptions] =
+    useState<SearchOptions>(defaultSearchOptions);
   const [anchorElSearch, setAnchorElSearch] = useState<null | HTMLElement>(
     null
   );
-  const [dateRange, setDateRange] = useState("");
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRange>(
+    DateRange.This_Month
+  );
   const [customDateRange, setCustomDateRange] = useState({
     from: null,
     to: null,
@@ -79,15 +122,20 @@ export default function TransactionListFilters() {
     setAnchorElSearch(null);
   };
 
-  const handleDateRangeChange = (value: string) => {
-    setDateRange(value);
-    if (value !== "custom") {
-      setCustomDateRange({ from: null, to: null });
+  const handleDateRangeChange = (value: DateRange) => {
+    setSelectedDateRange(value);
+    if (value !== DateRange.Custom) {
+      setSearchOptions({
+        ...searchOptions,
+        dateRange: getMappedDateRange[value],
+      });
     }
   };
 
   const handleCustomDateChange = (key: "from" | "to", date: any) => {
-    setCustomDateRange({ ...customDateRange, [key]: date });
+    const fromDate = key === "from" ? date : searchOptions.dateRange.fromDate;
+    const toDate = key === "to" ? date : searchOptions.dateRange.toDate;
+    setSearchOptions({ ...searchOptions, dateRange: { fromDate, toDate } });
   };
 
   const areSearchOptionsProvided =
@@ -132,26 +180,28 @@ export default function TransactionListFilters() {
           <div className="mb-2 font-bold">Date Time Range</div>
           <Box component={"div"} className="flex flex-col gap-4">
             <Select
-              value={dateRange}
-              onChange={(e) => handleDateRangeChange(e.target.value)}
+              value={selectedDateRange}
+              onChange={(e) =>
+                handleDateRangeChange(e.target.value as unknown as DateRange)
+              }
               displayEmpty
               inputProps={{ "aria-label": "Without label" }}
             >
               <MenuItem value="" disabled>
                 Select Date Range
               </MenuItem>
-              <MenuItem value="today">Today</MenuItem>
-              <MenuItem value="thisWeek">This Week</MenuItem>
-              <MenuItem value="thisMonth">This Month</MenuItem>
-              <MenuItem value="custom">Custom</MenuItem>
+              <MenuItem value={DateRange.Today}>Today</MenuItem>
+              <MenuItem value={DateRange.This_Week}>This Week</MenuItem>
+              <MenuItem value={DateRange.This_Month}>This Month</MenuItem>
+              <MenuItem value={DateRange.Custom}>Custom</MenuItem>
             </Select>
 
-            {dateRange === "custom" && (
+            {selectedDateRange === DateRange.Custom && (
               <div className="flex gap-2">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
+                  <DateTimePicker
                     label="From Date"
-                    value={customDateRange.from}
+                    value={dayjs(searchOptions.dateRange.fromDate)}
                     onChange={(date) => handleCustomDateChange("from", date)}
                     slotProps={{
                       textField: {
@@ -161,9 +211,9 @@ export default function TransactionListFilters() {
                   />
                 </LocalizationProvider>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
+                  <DateTimePicker
                     label="To Date"
-                    value={customDateRange.to}
+                    value={dayjs(searchOptions.dateRange.toDate)}
                     onChange={(date) => handleCustomDateChange("to", date)}
                     slotProps={{
                       textField: {
@@ -222,7 +272,15 @@ export default function TransactionListFilters() {
         >
           Save
         </Button>
-        <Button variant="outlined">Reset</Button>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            router.push(TRANSACTION_WITH_SEARCH_PARAMS);
+            handleClose();
+          }}
+        >
+          Reset
+        </Button>
       </Box>
     </Popover>
   );
@@ -242,12 +300,6 @@ export default function TransactionListFilters() {
       )}`
     );
   };
-
-  useEffect(() => {
-    router.push(
-      `transactions?appliedSearchOptions=${JSON.stringify(searchOptions)}`
-    );
-  }, []);
 
   return (
     <div className="flex justify-end w-full items-center gap-2">

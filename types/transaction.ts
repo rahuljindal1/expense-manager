@@ -23,4 +23,5 @@ export type Transaction = {
 export type SearchOptions = {
   keyword?: string;
   keywordSearchFields: string[];
+  dateRange: { fromDate: Date; toDate: Date };
 };
