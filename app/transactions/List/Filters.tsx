@@ -32,14 +32,18 @@ import {
 } from "date-fns";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 
 import { PRIMARY_BLUE, PRIMARY_BLUE_100 } from "@/constants/Colors";
 import {
   TRANSACTION_URL,
   TRANSACTION_WITH_SEARCH_PARAMS,
 } from "@/constants/RedirectionUrl";
-import { SearchKeywordField } from "@/enums/TransactionType";
+import {
+  SearchKeywordField,
+  SearchSortOrderOption,
+  SearchSortByOption,
+} from "@/enums/Transaction";
 import { debounce } from "@/lib/utils";
 import { ToastService } from "@/services/ToastService";
 import { SearchOptions } from "@/types/transaction";
@@ -82,10 +86,6 @@ export default function TransactionListFilters({
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange>(
     DateRange.This_Month
   );
-  const [customDateRange, setCustomDateRange] = useState({
-    from: null,
-    to: null,
-  });
 
   const handleSearchKeywordFieldChange = (field: SearchKeywordField) => {
     if (searchOptions.keywordSearchFields?.includes(field)) {
@@ -118,10 +118,6 @@ export default function TransactionListFilters({
     setAnchorElSearch(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorElSearch(null);
-  };
-
   const handleDateRangeChange = (value: DateRange) => {
     setSelectedDateRange(value);
     if (value !== DateRange.Custom) {
@@ -138,15 +134,11 @@ export default function TransactionListFilters({
     setSearchOptions({ ...searchOptions, dateRange: { fromDate, toDate } });
   };
 
-  const areSearchOptionsProvided =
-    searchOptions.keywordSearchFields?.length &&
-    searchOptions.keywordSearchFields?.length > 0;
+  const handleClose = () => {
+    setAnchorElSearch(null);
+  };
 
   const OptionProviderIndicator = () => {
-    if (!areSearchOptionsProvided) {
-      return <></>;
-    }
-
     return (
       <Tooltip title="Search Options Applied">
         <Box
@@ -250,8 +242,92 @@ export default function TransactionListFilters({
         </Box>
 
         <Box component={"div"}>
+          <div className="mb-2 font-bold">Sort Order</div>
+          <Box component={"div"} className="flex flex-row gap-8">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={Boolean(
+                    searchOptions.sort.sortOrder === SearchSortOrderOption.DESC
+                  )}
+                  onChange={() =>
+                    setSearchOptions({
+                      ...searchOptions,
+                      sort: {
+                        ...searchOptions.sort,
+                        sortOrder: SearchSortOrderOption.DESC,
+                      },
+                    })
+                  }
+                />
+              }
+              label="DESC"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={Boolean(
+                    searchOptions.sort.sortOrder === SearchSortOrderOption.ASC
+                  )}
+                  onChange={() =>
+                    setSearchOptions({
+                      ...searchOptions,
+                      sort: {
+                        ...searchOptions.sort,
+                        sortOrder: SearchSortOrderOption.ASC,
+                      },
+                    })
+                  }
+                />
+              }
+              label="ASC"
+            />
+          </Box>
+        </Box>
+
+        <Box component={"div"}>
           <div className="mb-2 font-bold">Sort By</div>
-          <FormControlLabel control={<Checkbox />} label="Amount" />
+          <Box component={"div"} className="flex flex-col ">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={Boolean(
+                    searchOptions.sort.sortBy === SearchSortByOption.Amount
+                  )}
+                  onChange={() =>
+                    setSearchOptions({
+                      ...searchOptions,
+                      sort: {
+                        ...searchOptions.sort,
+                        sortBy: SearchSortByOption.Amount,
+                      },
+                    })
+                  }
+                />
+              }
+              label="Amount"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={Boolean(
+                    searchOptions.sort.sortBy ===
+                      SearchSortByOption.TransactionDate
+                  )}
+                  onChange={() =>
+                    setSearchOptions({
+                      ...searchOptions,
+                      sort: {
+                        ...searchOptions.sort,
+                        sortBy: SearchSortByOption.TransactionDate,
+                      },
+                    })
+                  }
+                />
+              }
+              label="Transaction Date"
+            />
+          </Box>
         </Box>
       </Box>
 

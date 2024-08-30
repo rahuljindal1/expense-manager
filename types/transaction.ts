@@ -1,6 +1,10 @@
 import { Dayjs } from "dayjs";
 
-import { TransactionType } from "@/enums/TransactionType";
+import {
+  SearchSortOrderOption,
+  SearchSortByOption,
+  TransactionType,
+} from "@/enums/Transaction";
 
 export type AddTransactionFormaValues = {
   id: string;
@@ -24,4 +28,8 @@ export type SearchOptions = {
   keyword?: string;
   keywordSearchFields: string[];
   dateRange: { fromDate: Date; toDate: Date };
+  sort: {
+    sortBy: SearchSortByOption;
+    sortOrder: SearchSortOrderOption;
+  };
 };

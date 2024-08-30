@@ -1,8 +1,9 @@
 import { CATEGORIES } from "@/constants/Categories";
-import { SearchKeywordField } from "@/enums/TransactionType";
+import { SearchKeywordField, SearchSortOrderOption } from "@/enums/Transaction";
 import { SearchOptions, Transaction } from "@/types/transaction";
 
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
+import { orderBy, sortBy } from "lodash";
 
 const localForageService = new LocalForageService();
 
@@ -65,7 +66,7 @@ export const listTransactions = async ({
   );
 
   filteredTransactions = filteredTransactions.slice(offset, limit);
-  if (options?.keyword !== undefined) {
+  if (options.keyword !== undefined) {
     filteredTransactions = filteredTransactions.filter((transaction) => {
       if (
         options.keywordSearchFields.includes(SearchKeywordField.Description)
@@ -90,6 +91,14 @@ export const listTransactions = async ({
       }
       return false;
     });
+  }
+
+  if (options.sort) {
+    filteredTransactions = orderBy(
+      filteredTransactions,
+      [options.sort.sortBy],
+      [options.sort.sortOrder]
+    );
   }
 
   return {

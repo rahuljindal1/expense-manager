@@ -2,7 +2,11 @@ import { isDate } from "date-fns";
 import * as yup from "yup";
 
 import { DEFAULT_SEARCH_OPTIONS } from "@/constants/Transaction";
-import { SearchKeywordField } from "@/enums/TransactionType";
+import {
+  SearchKeywordField,
+  SearchSortOrderOption,
+  SearchSortByOption,
+} from "@/enums/Transaction";
 import { SearchOptions } from "@/types/transaction";
 
 const searchOptionsSchema = yup.object().shape({
@@ -28,6 +32,10 @@ const searchOptionsSchema = yup.object().shape({
     .array()
     .of(yup.mixed().oneOf(Object.values(SearchKeywordField)))
     .min(1, "keywordSearchFields must contain at least one value"),
+  sort: yup.object().shape({
+    sortBy: yup.string().oneOf(Object.values(SearchSortByOption)),
+    sortOrder: yup.string().oneOf(Object.values(SearchSortOrderOption)),
+  }),
 });
 
 export class TransactionService {
@@ -49,6 +57,9 @@ export class TransactionService {
       }
       if (parsedOptions.keywordSearchFields !== undefined) {
         searchOptions.keywordSearchFields = parsedOptions.keywordSearchFields;
+      }
+      if (parsedOptions.sort !== undefined) {
+        searchOptions.sort = parsedOptions.sort;
       }
     } catch (error) {
       console.log(error);

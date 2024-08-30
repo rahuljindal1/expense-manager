@@ -25,7 +25,7 @@ import Modal from "@/components/Modal";
 import { CATEGORIES } from "@/constants/Categories";
 import { UNEXPECTED_ERROR } from "@/constants/Error";
 import { TRANSACTION_WITH_SEARCH_PARAMS } from "@/constants/RedirectionUrl";
-import { TransactionType } from "@/enums/TransactionType";
+import { TransactionType } from "@/enums/Transaction";
 import { cn } from "@/lib/utils";
 import { ToastService } from "@/services/ToastService";
 import {

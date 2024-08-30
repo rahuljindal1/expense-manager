@@ -49,7 +49,7 @@ export default function TransactionList({
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
-  const NoTransactionFound = () => {
+  const OnLoadOrNoTransactionFound = () => {
     if (transactions.length > 0) {
       return <></>;
     }
@@ -63,7 +63,8 @@ export default function TransactionList({
           component="p"
           className="text-center text-gray-500 text-lg font-medium"
         >
-          Oops! No transactions found
+          {isLoading && <Loader />}
+          {!isLoading && "Oops! No transactions found"}
         </Box>
       </Box>
     );
@@ -117,7 +118,7 @@ export default function TransactionList({
           className="w-[100%] h-[100%] relative"
           sx={{ border: DARK_200, boxShadow: "none" }}
         >
-          <NoTransactionFound />
+          <OnLoadOrNoTransactionFound />
           <Table>
             <TableHead>
               <TableRow>

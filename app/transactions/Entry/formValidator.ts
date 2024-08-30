@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-import { TransactionType } from "@/enums/TransactionType";
+import { TransactionType } from "@/enums/Transaction";
 
 export const validationSchema = yup.object().shape({
   description: yup.string().required("Description is required"),
