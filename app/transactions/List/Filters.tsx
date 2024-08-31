@@ -325,7 +325,7 @@ export default function TransactionListFilters({
                   }
                 />
               }
-              label="Transaction Date"
+              label="Date"
             />
           </Box>
         </Box>

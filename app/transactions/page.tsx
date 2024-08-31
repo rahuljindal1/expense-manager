@@ -5,7 +5,6 @@ import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 import { TRANSACTION_URL } from "@/constants/RedirectionUrl";
-import { SearchOptions } from "@/types/transaction";
 
 import TransactionEntryForm from "./Entry/form";
 import TransactionList from "./List";

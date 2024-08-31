@@ -2,6 +2,8 @@
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import UpArrow from "@mui/icons-material/North";
+import DownArrow from "@mui/icons-material/South";
 import {
   Box,
   Table,
@@ -25,6 +27,7 @@ import { DARK_200 } from "@/constants/Colors";
 import { UNEXPECTED_ERROR } from "@/constants/Error";
 import { TRANSACTION_URL } from "@/constants/RedirectionUrl";
 import { ITEMS_PER_PAGE } from "@/constants/Transaction";
+import { SearchSortByOption, SearchSortOrderOption } from "@/enums/Transaction";
 import { cn, formatToIndianCurrency, truncateString } from "@/lib/utils";
 import { ToastService } from "@/services/ToastService";
 import {
@@ -122,10 +125,50 @@ export default function TransactionList({
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Date</TableCell>
+                <TableCell>
+                  <Box
+                    component={"div"}
+                    className="flex flex-row items-center gap-1"
+                  >
+                    {<Box component={"span"}>Date</Box>}
+                    {appliedSearchOptions.sort.sortBy ===
+                      SearchSortByOption.TransactionDate && (
+                      <>
+                        {appliedSearchOptions.sort.sortOrder ===
+                          SearchSortOrderOption.DESC && (
+                          <DownArrow className="text-[16px]" />
+                        )}
+                        {appliedSearchOptions.sort.sortOrder ===
+                          SearchSortOrderOption.ASC && (
+                          <UpArrow className="text-[16px]" />
+                        )}
+                      </>
+                    )}
+                  </Box>
+                </TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell align="center">Categories</TableCell>
-                <TableCell align="right">Amount</TableCell>
+                <TableCell align="right" className="flex flex-row justify-end">
+                  <Box
+                    component={"div"}
+                    className="flex flex-row items-center gap-1"
+                  >
+                    {<Box component={"span"}>Amount</Box>}
+                    {appliedSearchOptions.sort.sortBy ===
+                      SearchSortByOption.Amount && (
+                      <>
+                        {appliedSearchOptions.sort.sortOrder ===
+                          SearchSortOrderOption.DESC && (
+                          <DownArrow className="text-[16px]" />
+                        )}
+                        {appliedSearchOptions.sort.sortOrder ===
+                          SearchSortOrderOption.ASC && (
+                          <UpArrow className="text-[16px]" />
+                        )}
+                      </>
+                    )}
+                  </Box>
+                </TableCell>
                 <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
