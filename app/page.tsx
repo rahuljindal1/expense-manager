@@ -17,7 +17,7 @@ import {
   Select,
 } from "@mui/material";
 import { LineChart, PieChart } from "@mui/x-charts";
-import { endOfMonth, startOfMonth, toDate } from "date-fns";
+import { endOfMonth, format, startOfMonth, toDate } from "date-fns";
 import { useEffect, useState } from "react";
 
 import DateRangeFilter from "@/components/DateRangeFilter";
@@ -74,9 +74,9 @@ const Dashboard = () => {
           dateRange,
           selectedCategory
         );
-        console.log(categoriesStats);
         setCategoryStats(categoriesStats);
       } catch (error) {
+        console.log(error);
         toastService.error("Error fetching dashboard stats");
       }
     }
@@ -239,25 +239,7 @@ const Dashboard = () => {
         </Grid>
 
         {/* Charts Section */}
-        <Grid container spacing={3} mt={2} ml={0}>
-          <Grid item xs={12} md={6}>
-            <Card
-              variant="outlined"
-              className="rounded-[24px]"
-              sx={{
-                boxShadow:
-                  "rgba(0, 0, 0, 0.04) 0px 5px 22px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" fontWeight="bold">
-                  Income vs Expenses
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                {/* <LineChart data={incomeExpenseData} /> */}
-              </CardContent>
-            </Card>
-          </Grid>
+        <Grid container spacing={2} mt={2} ml={0}>
           <Grid item xs={12} md={6}>
             <Card
               variant="outlined"

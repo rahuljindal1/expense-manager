@@ -13,8 +13,8 @@ export default function DateRangeFilter({
   onChange: (newDateRange: DateRange) => void;
 }) {
   const handleCustomDateChange = (key: "from" | "to", date: any) => {
-    const fromDate = key === "from" ? date : dateRange.fromDate;
-    const toDate = key === "to" ? date : dateRange.toDate;
+    const fromDate = key === "from" ? new Date(date) : dateRange.fromDate;
+    const toDate = key === "to" ? new Date(date) : dateRange.toDate;
     onChange({ fromDate, toDate });
   };
 
