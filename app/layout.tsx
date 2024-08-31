@@ -31,9 +31,11 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <div className="flex">
-          <Sidebar />
-          {children}
+        <div className="flex flex-row w-screen">
+          <div className="w-[17%]">
+            <Sidebar />
+          </div>
+          <div className="w-[83%]">{children}</div>
         </div>
         <ToastContainer />
       </body>

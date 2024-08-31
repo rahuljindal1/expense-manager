@@ -21,7 +21,7 @@ function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="h-screen w-64 bg-gray-800 text-white flex flex-col">
+    <div className="h-screen bg-gray-800 text-white flex flex-col">
       <nav className="flex-1 p-4">
         <ul>
           {menuItems.map((item) => {

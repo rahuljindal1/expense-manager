@@ -5,7 +5,6 @@ import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 import { TRANSACTION_URL } from "@/constants/RedirectionUrl";
-import { SearchKeywordField } from "@/enums/TransactionType";
 import { SearchOptions } from "@/types/transaction";
 
 import TransactionEntryForm from "./Entry/form";
@@ -28,7 +27,7 @@ export default function Transactions({
   const router = useRouter();
 
   return (
-    <div className="min-h-screen max-h-screen flex px-4 py-12 w-screen">
+    <div className="min-h-screen max-h-screen flex px-4 py-12 w-[100%]">
       <TransactionList
         appliedSearchOptions={transactionService.sanitizeSearchOptions(
           appliedSearchOptions
