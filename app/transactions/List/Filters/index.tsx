@@ -81,55 +81,51 @@ export default function TransactionListFilters({
   };
 
   return (
-    <div className="flex  items-center gap-2">
-      <TextField
-        placeholder={`Search by ${searchOptions.keywordSearchFields
-          .join(" or ")
-          .toLowerCase()}`}
-        onChange={debounce(onKeywordSearch)}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
-        sx={{
-          "& .MuiOutlinedInput-input": {
-            padding: "0.75rem 0.15rem",
-          },
-          minWidth: "300px",
-        }}
-      />
-
-      <IconButton
-        onClick={handleSearchOptionClick}
-        className="p-[0.75rem] rounded-[4px] relative"
-        sx={{
-          color: PRIMARY_BLUE,
-          backgroundColor: PRIMARY_BLUE_100,
-
-          "&:hover": {
-            color: "white",
-            backgroundColor: PRIMARY_BLUE,
-          },
-        }}
-      >
-        <FilterIcon />
-        <OptionProviderIndicator />
-      </IconButton>
-
-      <FilterOptionsPopover
-        searchOptions={searchOptions}
-        setSearchOptions={setSearchOptions}
-        anchorEl={anchorElSearch}
-        setAnchorEl={setAnchorElSearch}
-      />
-
+    <div className="flex items-center gap-2 w-full justify-between">
       <DateRangeFilter
         dateRange={searchOptions.dateRange}
         onChange={onDateRangChange}
       />
+
+      <Box component={"div"} className="flex flex-row gap-4">
+        <TextField
+          placeholder={`Search by ${searchOptions.keywordSearchFields
+            .join(" or ")
+            .toLowerCase()}`}
+          onChange={debounce(onKeywordSearch)}
+          sx={{
+            "& .MuiOutlinedInput-input": {
+              fontSize: "0.875rem",
+              padding: "8px 12px",
+            },
+            minWidth: "220px",
+          }}
+        />
+
+        <IconButton
+          onClick={handleSearchOptionClick}
+          className="p-[0.4rem] rounded-[4px] relative"
+          sx={{
+            color: PRIMARY_BLUE,
+            backgroundColor: PRIMARY_BLUE_100,
+
+            "&:hover": {
+              color: "white",
+              backgroundColor: PRIMARY_BLUE,
+            },
+          }}
+        >
+          <FilterIcon />
+          <OptionProviderIndicator />
+        </IconButton>
+
+        <FilterOptionsPopover
+          searchOptions={searchOptions}
+          setSearchOptions={setSearchOptions}
+          anchorEl={anchorElSearch}
+          setAnchorEl={setAnchorElSearch}
+        />
+      </Box>
     </div>
   );
 }

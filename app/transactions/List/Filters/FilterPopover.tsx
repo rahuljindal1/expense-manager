@@ -2,34 +2,16 @@ import {
   Popover,
   Paper,
   Box,
-  Select,
-  MenuItem,
   FormControlLabel,
   Checkbox,
   Divider,
   Button,
 } from "@mui/material";
-import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {
-  startOfDay,
-  endOfDay,
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
-  endOfMonth,
-} from "date-fns";
-import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useState } from "react";
 
 import { DARK_500 } from "@/constants/Colors";
+import { TRANSACTION_WITH_SEARCH_PARAMS } from "@/constants/RedirectionUrl";
 import {
-  TRANSACTION_URL,
-  TRANSACTION_WITH_SEARCH_PARAMS,
-} from "@/constants/RedirectionUrl";
-import {
-  DateRangeEnum,
   SearchKeywordField,
   SearchSortOrderOption,
   SearchSortByOption,
@@ -38,21 +20,6 @@ import { ToastService } from "@/services/ToastService";
 import { SearchOptions } from "@/types/transaction";
 
 const toastService = new ToastService();
-
-const getMappedDateRange = {
-  [DateRangeEnum.Today]: {
-    fromDate: startOfDay(new Date()),
-    toDate: endOfDay(new Date()),
-  },
-  [DateRangeEnum.This_Week]: {
-    fromDate: startOfWeek(new Date()),
-    toDate: endOfWeek(new Date()),
-  },
-  [DateRangeEnum.This_Month]: {
-    fromDate: startOfMonth(new Date()),
-    toDate: endOfMonth(new Date()),
-  },
-};
 
 export default function FilterOptionsPopover({
   searchOptions,
@@ -66,9 +33,6 @@ export default function FilterOptionsPopover({
   setAnchorEl: (el: null | HTMLElement) => void;
 }) {
   const router = useRouter();
-  const [selectedDateRange, setSelectedDateRange] = useState<DateRangeEnum>(
-    DateRangeEnum.This_Month
-  );
 
   const handleSearchKeywordFieldChange = (field: SearchKeywordField) => {
     if (searchOptions.keywordSearchFields?.includes(field)) {
@@ -97,22 +61,6 @@ export default function FilterOptionsPopover({
     });
   };
 
-  const handleDateRangeChange = (value: DateRangeEnum) => {
-    setSelectedDateRange(value);
-    if (value !== DateRangeEnum.Custom) {
-      setSearchOptions({
-        ...searchOptions,
-        dateRange: getMappedDateRange[value],
-      });
-    }
-  };
-
-  const handleCustomDateChange = (key: "from" | "to", date: any) => {
-    const fromDate = key === "from" ? date : searchOptions.dateRange.fromDate;
-    const toDate = key === "to" ? date : searchOptions.dateRange.toDate;
-    setSearchOptions({ ...searchOptions, dateRange: { fromDate, toDate } });
-  };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -134,59 +82,6 @@ export default function FilterOptionsPopover({
           component={"div"}
           className="flex flex-col gap-4 min-w-[360px]"
         >
-          <Box component={"div"}>
-            <div className="mb-2 font-bold">Date Time Range</div>
-            <Box component={"div"} className="flex flex-col gap-4">
-              <Select
-                value={selectedDateRange}
-                onChange={(e) =>
-                  handleDateRangeChange(
-                    e.target.value as unknown as DateRangeEnum
-                  )
-                }
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-              >
-                <MenuItem value="" disabled>
-                  Select Date Range
-                </MenuItem>
-                <MenuItem value={DateRangeEnum.Today}>Today</MenuItem>
-                <MenuItem value={DateRangeEnum.This_Week}>This Week</MenuItem>
-                <MenuItem value={DateRangeEnum.This_Month}>This Month</MenuItem>
-                <MenuItem value={DateRangeEnum.Custom}>Custom</MenuItem>
-              </Select>
-
-              {selectedDateRange === DateRangeEnum.Custom && (
-                <div className="flex gap-2">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateTimePicker
-                      label="From Date"
-                      value={dayjs(searchOptions.dateRange.fromDate)}
-                      onChange={(date) => handleCustomDateChange("from", date)}
-                      slotProps={{
-                        textField: {
-                          size: "small",
-                        },
-                      }}
-                    />
-                  </LocalizationProvider>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateTimePicker
-                      label="To Date"
-                      value={dayjs(searchOptions.dateRange.toDate)}
-                      onChange={(date) => handleCustomDateChange("to", date)}
-                      slotProps={{
-                        textField: {
-                          size: "small",
-                        },
-                      }}
-                    />
-                  </LocalizationProvider>
-                </div>
-              )}
-            </Box>
-          </Box>
-
           <Box component={"div"} className="flex flex-col">
             <div className="mb-2 font-bold">Search In</div>
             {Object.keys(SearchKeywordField).map((keywordField) => (
