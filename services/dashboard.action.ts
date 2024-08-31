@@ -1,13 +1,14 @@
-import { Transaction } from "@/types/transaction";
-import { KEY_NAMES, LocalForageService } from "./LocalForage";
-import { DateRange } from "@/types/date";
+import { CATEGORIES } from "@/constants/Categories";
 import { TransactionType } from "@/enums/Transaction";
 import {
   CategoryStat,
   TransactionCategoryStats,
   TransactionSummary,
 } from "@/types/dashboard";
-import { CATEGORIES } from "@/constants/Categories";
+import { DateRange } from "@/types/date";
+import { Transaction } from "@/types/transaction";
+
+import { KEY_NAMES, LocalForageService } from "./LocalForage";
 
 const localForageService = new LocalForageService();
 
