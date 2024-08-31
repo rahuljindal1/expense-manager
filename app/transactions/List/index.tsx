@@ -112,7 +112,13 @@ export default function TransactionList({
   return (
     <div className="space-y-4 flex flex-col justify-center items-center w-[100%]">
       <>
-        <TransactionListFilters defaultSearchOptions={appliedSearchOptions} />
+        <Box
+          component={"div"}
+          className="w-[100%] flex flex-row items-center justify-between"
+        >
+          <Box>Some content</Box>
+          <TransactionListFilters defaultSearchOptions={appliedSearchOptions} />
+        </Box>
         <TableContainer
           component={Paper}
           className="w-[100%] h-[100%] relative"

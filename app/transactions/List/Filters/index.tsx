@@ -67,9 +67,11 @@ export default function TransactionListFilters({
   };
 
   return (
-    <div className="flex justify-end w-full items-center gap-2">
+    <div className="flex  items-center gap-2">
       <TextField
-        placeholder="Search"
+        placeholder={`Search by ${searchOptions.keywordSearchFields
+          .join(" or ")
+          .toLowerCase()}`}
         onChange={debounce(onKeywordSearch)}
         InputProps={{
           startAdornment: (
@@ -82,7 +84,7 @@ export default function TransactionListFilters({
           "& .MuiOutlinedInput-input": {
             padding: "0.75rem 0.15rem",
           },
-          minWidth: "260px",
+          minWidth: "300px",
         }}
       />
 
