@@ -21,7 +21,6 @@ import {
 } from "date-fns";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import router from "next/router";
 import { ChangeEvent, useState } from "react";
 
 import { DARK_500 } from "@/constants/Colors";
@@ -112,22 +111,6 @@ export default function FilterOptionsPopover({
     const fromDate = key === "from" ? date : searchOptions.dateRange.fromDate;
     const toDate = key === "to" ? date : searchOptions.dateRange.toDate;
     setSearchOptions({ ...searchOptions, dateRange: { fromDate, toDate } });
-  };
-
-  const onKeywordSearch = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const trimmedKeyword = e.target.value.trim();
-    const newSearchOptions = {
-      ...searchOptions,
-      keyword: trimmedKeyword,
-    };
-    setSearchOptions(newSearchOptions);
-    router.push(
-      `${TRANSACTION_URL}?appliedSearchOptions=${JSON.stringify(
-        newSearchOptions
-      )}`
-    );
   };
 
   const handleClose = () => {

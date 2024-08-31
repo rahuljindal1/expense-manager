@@ -18,7 +18,8 @@ import {
 import { debounce } from "@/lib/utils";
 import { SearchOptions } from "@/types/transaction";
 
-import FilterOptionsPopover from "./OptionsPopover";
+import DateRangeFilter from "./DateRangeFilter";
+import FilterOptionsPopover from "./FilterPopover";
 
 export default function TransactionListFilters({
   defaultSearchOptions,
@@ -31,6 +32,7 @@ export default function TransactionListFilters({
   const [anchorElSearch, setAnchorElSearch] = useState<null | HTMLElement>(
     null
   );
+
   const handleSearchOptionClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElSearch(event.currentTarget);
   };
@@ -110,6 +112,11 @@ export default function TransactionListFilters({
         setSearchOptions={setSearchOptions}
         anchorEl={anchorElSearch}
         setAnchorEl={setAnchorElSearch}
+      />
+
+      <DateRangeFilter
+        searchOptions={searchOptions}
+        setSearchOptions={setSearchOptions}
       />
     </div>
   );
