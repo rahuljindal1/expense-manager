@@ -103,5 +103,8 @@ export const getTransactionSummary = async (
     revenueChange,
     netBalance,
     netBalanceChange,
+    prevTotalExpense: previousTotalExpense,
+    prevTotalRevenue: previousTotalRevenue,
+    prevNetBalance: previousNetBalance,
   };
 };

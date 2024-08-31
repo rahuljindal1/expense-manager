@@ -27,10 +27,13 @@ const toastService = new ToastService();
 const DEFAULT_TRANSACTION_SUMMARY: TransactionSummary = {
   totalExpense: 0,
   expenseChange: 0,
+  prevTotalExpense: 0,
   totalRevenue: 0,
   revenueChange: 0,
+  prevTotalRevenue: 0,
   netBalance: 0,
   netBalanceChange: 0,
+  prevNetBalance: 0,
 };
 
 const DEFAULT_DATE_RANGE: DateRange = {
@@ -61,7 +64,13 @@ const Dashboard = () => {
     }),
   ]);
 
-  const NetChange = ({ percentageChange }: { percentageChange: number }) => {
+  const NetChange = ({
+    percentageChange,
+    previousValue,
+  }: {
+    percentageChange: number;
+    previousValue: number;
+  }) => {
     let text = "";
     let textColor = "";
     if (percentageChange === 0) {
@@ -82,9 +91,14 @@ const Dashboard = () => {
         {percentageChange < 0 && (
           <ArrowDownwardIcon fontSize="small" color="error" />
         )}
-        <Typography variant="body2" color={textColor} ml={0.5}>
-          {text}
-        </Typography>
+        <Box component={"div"} className="flex flex-row">
+          <Typography variant="body2" color={textColor} ml={0.5}>
+            {text}
+          </Typography>
+          <Typography variant="body2" ml={1} color={"gray"}>
+            from {formatToIndianCurrency(previousValue)}
+          </Typography>
+        </Box>
       </Box>
     );
   };
@@ -135,6 +149,7 @@ const Dashboard = () => {
                 </Typography>
                 <NetChange
                   percentageChange={transactionSummary.revenueChange}
+                  previousValue={transactionSummary.prevTotalRevenue}
                 />
               </CardContent>
             </SummaryCard>
@@ -156,6 +171,7 @@ const Dashboard = () => {
                 </Typography>
                 <NetChange
                   percentageChange={transactionSummary.expenseChange}
+                  previousValue={transactionSummary.prevTotalExpense}
                 />
               </CardContent>
             </SummaryCard>
@@ -189,6 +205,7 @@ const Dashboard = () => {
                 </Typography>
                 <NetChange
                   percentageChange={transactionSummary.netBalanceChange}
+                  previousValue={transactionSummary.prevNetBalance}
                 />
               </CardContent>
             </SummaryCard>
