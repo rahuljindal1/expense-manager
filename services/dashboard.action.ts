@@ -2,7 +2,12 @@ import { Transaction } from "@/types/transaction";
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
 import { DateRange } from "@/types/date";
 import { TransactionType } from "@/enums/Transaction";
-import { TransactionSummary } from "@/types/dashboard";
+import {
+  CategoryStat,
+  TransactionCategoryStats,
+  TransactionSummary,
+} from "@/types/dashboard";
+import { CATEGORIES } from "@/constants/Categories";
 
 const localForageService = new LocalForageService();
 
@@ -107,4 +112,53 @@ export const getTransactionSummary = async (
     prevTotalRevenue: previousTotalRevenue,
     prevNetBalance: previousNetBalance,
   };
+};
+
+export const getTransactionCategoryStats = async (
+  dateRange: DateRange,
+  transactionType: TransactionType
+): Promise<TransactionCategoryStats> => {
+  const allTransactions =
+    ((await localForageService.getItem(
+      KEY_NAMES.TRANSACTIONS
+    )) as Transaction[]) || [];
+
+  let filteredTransactions = allTransactions.filter(
+    (transaction) =>
+      transaction.transactionType === transactionType &&
+      new Date(transaction.transactionDate).getTime() >=
+        dateRange.fromDate.getTime() &&
+      new Date(transaction.transactionDate).getTime() <=
+        dateRange.toDate.getTime()
+  );
+
+  const data: CategoryStat[] = [];
+  for (const transaction of filteredTransactions) {
+    const categories: typeof CATEGORIES = [];
+    transaction.categories?.forEach((categoryId) => {
+      const category = CATEGORIES.find(
+        (category) => category.id === categoryId
+      );
+      if (category) {
+        categories.push(category);
+      }
+    });
+
+    categories.forEach((category) => {
+      const existingDataIndex = data.findIndex(
+        (el) => el.id === String(category.id)
+      );
+      if (existingDataIndex === -1) {
+        data.push({
+          id: String(category.id),
+          value: transaction.amount,
+          label: category.name,
+        });
+      } else {
+        data[existingDataIndex].value += transaction.amount;
+      }
+    });
+  }
+
+  return { data };
 };

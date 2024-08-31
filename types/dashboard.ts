@@ -9,3 +9,13 @@ export type TransactionSummary = {
   prevNetBalance: number;
   netBalanceChange: number;
 };
+
+export type CategoryStat = {
+  id: string;
+  value: number;
+  label: string;
+};
+
+export type TransactionCategoryStats = {
+  data: CategoryStat[];
+};

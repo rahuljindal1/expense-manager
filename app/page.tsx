@@ -9,18 +9,29 @@ import {
   Box,
   Divider,
   IconButton,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { LineChart, PieChart } from "@mui/x-charts";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import DateRangeFilter from "@/components/DateRangeFilter";
 import { useEffect, useState } from "react";
-import { TransactionSummary } from "@/types/dashboard";
+import {
+  TransactionCategoryStats,
+  TransactionSummary,
+} from "@/types/dashboard";
 import { formatToIndianCurrency } from "@/lib/utils";
 import { DateRange } from "@/types/date";
 import { endOfMonth, startOfMonth, toDate } from "date-fns";
 import { ToastService } from "@/services/ToastService";
-import { getTransactionSummary } from "@/services/dashboard.action";
+import {
+  getTransactionCategoryStats,
+  getTransactionSummary,
+} from "@/services/dashboard.action";
+import { TransactionType } from "@/enums/Transaction";
 
 const toastService = new ToastService();
 
@@ -45,12 +56,25 @@ const Dashboard = () => {
   const [dateRange, setDateRange] = useState<DateRange>(DEFAULT_DATE_RANGE);
   const [transactionSummary, setTransactionSummary] =
     useState<TransactionSummary>(DEFAULT_TRANSACTION_SUMMARY);
+  const [categoryStats, setCategoryStats] = useState<TransactionCategoryStats>({
+    data: [],
+  });
+  const [selectedCategory, setSelectedCategory] = useState<TransactionType>(
+    TransactionType.Expense
+  );
 
   useEffect(() => {
     async function init() {
       try {
-        const response = await getTransactionSummary(dateRange);
-        setTransactionSummary(response);
+        const transactionSummary = await getTransactionSummary(dateRange);
+        setTransactionSummary(transactionSummary);
+
+        const categoriesStats = await getTransactionCategoryStats(
+          dateRange,
+          selectedCategory
+        );
+        console.log(categoriesStats);
+        setCategoryStats(categoriesStats);
       } catch (error) {
         toastService.error("Error fetching dashboard stats");
       }
@@ -62,6 +86,7 @@ const Dashboard = () => {
       fromDate: dateRange.fromDate.toISOString(),
       toDate: dateRange.toDate.toISOString(),
     }),
+    selectedCategory,
   ]);
 
   const NetChange = ({
@@ -213,30 +238,86 @@ const Dashboard = () => {
         </Grid>
 
         {/* Charts Section */}
-        {/* <Grid container spacing={3} mt={3}>
+        <Grid container spacing={3} mt={2} ml={0}>
           <Grid item xs={12} md={6}>
-            <Card variant="outlined">
+            <Card
+              variant="outlined"
+              className="rounded-[24px]"
+              sx={{
+                boxShadow:
+                  "rgba(0, 0, 0, 0.04) 0px 5px 22px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
+              }}
+            >
               <CardContent>
                 <Typography variant="h6" fontWeight="bold">
                   Income vs Expenses
                 </Typography>
                 <Divider sx={{ my: 2 }} />
-                <LineChart data={incomeExpenseData} />
+                {/* <LineChart data={incomeExpenseData} /> */}
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Card variant="outlined">
+            <Card
+              variant="outlined"
+              className="rounded-[24px]"
+              sx={{
+                boxShadow:
+                  "rgba(0, 0, 0, 0.04) 0px 5px 22px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
+              }}
+            >
               <CardContent>
-                <Typography variant="h6" fontWeight="bold">
-                  Expense by Category
-                </Typography>
+                <Box component={"div"} className="flex justify-between">
+                  <Typography variant="h6" fontWeight="bold">
+                    Category Distribution
+                  </Typography>
+                  <FormControl
+                    sx={{
+                      width: 128,
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                        paddingRight: "16px",
+                        boxShadow:
+                          "rgba(0, 0, 0, 0.04) 0px 5px 22px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
+                      },
+                      "& .MuiSelect-select": {
+                        padding: "6px 12px",
+                        display: "flex",
+                        alignItems: "center",
+                        borderRadius: "50px",
+                      },
+                      "& .MuiSelect-icon": {
+                        right: "10px",
+                        color: "#606060",
+                      },
+                    }}
+                  >
+                    <Select
+                      value={selectedCategory}
+                      onChange={(e) => {
+                        setSelectedCategory(e.target.value as TransactionType);
+                      }}
+                      disableUnderline
+                      displayEmpty
+                      sx={{
+                        borderRadius: "50px",
+                      }}
+                    >
+                      <MenuItem value={TransactionType.Expense}>
+                        Expense
+                      </MenuItem>
+                      <MenuItem value={TransactionType.Revenue}>
+                        Revenue
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
                 <Divider sx={{ my: 2 }} />
-                <PieChart data={categoryData} />
+                <PieChart series={[categoryStats]} height={200} width={400} />
               </CardContent>
             </Card>
           </Grid>
-        </Grid> */}
+        </Grid>
 
         {/* Recent Transactions */}
         {/* <Grid container spacing={3} mt={3}>
