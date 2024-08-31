@@ -11,6 +11,7 @@ import { Transaction } from "@/types/transaction";
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
 import { format } from "date-fns";
 import { orderBy } from "lodash";
+import { DefaultizedPieValueType } from "@mui/x-charts";
 
 const localForageService = new LocalForageService();
 
@@ -136,6 +137,7 @@ export const getTransactionCategoryStats = async (
   );
 
   const data: CategoryStat[] = [];
+  let totalAmount = 0;
   for (const transaction of filteredTransactions) {
     const categories: typeof CATEGORIES = [];
     transaction.categories?.forEach((categoryId) => {
@@ -148,6 +150,7 @@ export const getTransactionCategoryStats = async (
     });
 
     categories.forEach((category) => {
+      totalAmount += transaction.amount;
       const existingDataIndex = data.findIndex(
         (el) => el.id === String(category.id)
       );
@@ -163,5 +166,11 @@ export const getTransactionCategoryStats = async (
     });
   }
 
-  return { data };
+  return {
+    data,
+    arcLabel: (params: DefaultizedPieValueType) => {
+      const percent = params.value / totalAmount;
+      return `${(percent * 100).toFixed(0)}%`;
+    },
+  };
 };

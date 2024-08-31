@@ -1,3 +1,5 @@
+import { DefaultizedPieValueType } from "@mui/x-charts";
+
 export type TransactionSummary = {
   totalRevenue: number;
   prevTotalRevenue: number;
@@ -18,4 +20,5 @@ export type CategoryStat = {
 
 export type TransactionCategoryStats = {
   data: CategoryStat[];
+  arcLabel?: (params: DefaultizedPieValueType) => string;
 };
