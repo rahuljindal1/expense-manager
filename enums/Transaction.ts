@@ -18,7 +18,7 @@ export enum SearchSortByOption {
   TransactionDate = "transactionDate",
 }
 
-export enum DateRange {
+export enum DateRangeEnum {
   "Today" = "Today",
   "This_Month" = "This_Month",
   "This_Week" = "This_Week",

@@ -29,7 +29,7 @@ import {
   TRANSACTION_WITH_SEARCH_PARAMS,
 } from "@/constants/RedirectionUrl";
 import {
-  DateRange,
+  DateRangeEnum,
   SearchKeywordField,
   SearchSortOrderOption,
   SearchSortByOption,
@@ -40,15 +40,15 @@ import { SearchOptions } from "@/types/transaction";
 const toastService = new ToastService();
 
 const getMappedDateRange = {
-  [DateRange.Today]: {
+  [DateRangeEnum.Today]: {
     fromDate: startOfDay(new Date()),
     toDate: endOfDay(new Date()),
   },
-  [DateRange.This_Week]: {
+  [DateRangeEnum.This_Week]: {
     fromDate: startOfWeek(new Date()),
     toDate: endOfWeek(new Date()),
   },
-  [DateRange.This_Month]: {
+  [DateRangeEnum.This_Month]: {
     fromDate: startOfMonth(new Date()),
     toDate: endOfMonth(new Date()),
   },
@@ -66,8 +66,8 @@ export default function FilterOptionsPopover({
   setAnchorEl: (el: null | HTMLElement) => void;
 }) {
   const router = useRouter();
-  const [selectedDateRange, setSelectedDateRange] = useState<DateRange>(
-    DateRange.This_Month
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRangeEnum>(
+    DateRangeEnum.This_Month
   );
 
   const handleSearchKeywordFieldChange = (field: SearchKeywordField) => {
@@ -97,9 +97,9 @@ export default function FilterOptionsPopover({
     });
   };
 
-  const handleDateRangeChange = (value: DateRange) => {
+  const handleDateRangeChange = (value: DateRangeEnum) => {
     setSelectedDateRange(value);
-    if (value !== DateRange.Custom) {
+    if (value !== DateRangeEnum.Custom) {
       setSearchOptions({
         ...searchOptions,
         dateRange: getMappedDateRange[value],
@@ -140,7 +140,9 @@ export default function FilterOptionsPopover({
               <Select
                 value={selectedDateRange}
                 onChange={(e) =>
-                  handleDateRangeChange(e.target.value as unknown as DateRange)
+                  handleDateRangeChange(
+                    e.target.value as unknown as DateRangeEnum
+                  )
                 }
                 displayEmpty
                 inputProps={{ "aria-label": "Without label" }}
@@ -148,13 +150,13 @@ export default function FilterOptionsPopover({
                 <MenuItem value="" disabled>
                   Select Date Range
                 </MenuItem>
-                <MenuItem value={DateRange.Today}>Today</MenuItem>
-                <MenuItem value={DateRange.This_Week}>This Week</MenuItem>
-                <MenuItem value={DateRange.This_Month}>This Month</MenuItem>
-                <MenuItem value={DateRange.Custom}>Custom</MenuItem>
+                <MenuItem value={DateRangeEnum.Today}>Today</MenuItem>
+                <MenuItem value={DateRangeEnum.This_Week}>This Week</MenuItem>
+                <MenuItem value={DateRangeEnum.This_Month}>This Month</MenuItem>
+                <MenuItem value={DateRangeEnum.Custom}>Custom</MenuItem>
               </Select>
 
-              {selectedDateRange === DateRange.Custom && (
+              {selectedDateRange === DateRangeEnum.Custom && (
                 <div className="flex gap-2">
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker

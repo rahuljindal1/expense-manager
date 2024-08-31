@@ -12,49 +12,47 @@ import {
 import dayjs from "dayjs";
 import { useState } from "react";
 
-import { DateRange } from "@/enums/Transaction";
+import { DateRangeEnum } from "@/enums/Transaction";
+import { DateRange } from "@/types/date";
 import { SearchOptions } from "@/types/transaction";
 
 const getMappedDateRange = {
-  [DateRange.Today]: {
+  [DateRangeEnum.Today]: {
     fromDate: startOfDay(new Date()),
     toDate: endOfDay(new Date()),
   },
-  [DateRange.This_Week]: {
+  [DateRangeEnum.This_Week]: {
     fromDate: startOfWeek(new Date()),
     toDate: endOfWeek(new Date()),
   },
-  [DateRange.This_Month]: {
+  [DateRangeEnum.This_Month]: {
     fromDate: startOfMonth(new Date()),
     toDate: endOfMonth(new Date()),
   },
 };
 
 export default function DateRangeFilter({
-  searchOptions,
-  setSearchOptions,
+  dateRange,
+  onChange,
 }: {
-  searchOptions: SearchOptions;
-  setSearchOptions: (newSearchOptions: SearchOptions) => void;
+  dateRange: DateRange;
+  onChange: (newDateRange: DateRange) => void;
 }) {
-  const [selectedDateRange, setSelectedDateRange] = useState<DateRange>(
-    DateRange.This_Month
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRangeEnum>(
+    DateRangeEnum.This_Month
   );
 
-  const handleDateRangeChange = (value: DateRange) => {
+  const handleDateRangeChange = (value: DateRangeEnum) => {
     setSelectedDateRange(value);
-    if (value !== DateRange.Custom) {
-      setSearchOptions({
-        ...searchOptions,
-        dateRange: getMappedDateRange[value],
-      });
+    if (value !== DateRangeEnum.Custom) {
+      onChange(getMappedDateRange[value]);
     }
   };
 
   const handleCustomDateChange = (key: "from" | "to", date: any) => {
-    const fromDate = key === "from" ? date : searchOptions.dateRange.fromDate;
-    const toDate = key === "to" ? date : searchOptions.dateRange.toDate;
-    setSearchOptions({ ...searchOptions, dateRange: { fromDate, toDate } });
+    const fromDate = key === "from" ? date : dateRange.fromDate;
+    const toDate = key === "to" ? date : dateRange.toDate;
+    onChange({ fromDate, toDate });
   };
 
   return (
@@ -62,7 +60,7 @@ export default function DateRangeFilter({
       <Select
         value={selectedDateRange}
         onChange={(e) =>
-          handleDateRangeChange(e.target.value as unknown as DateRange)
+          handleDateRangeChange(e.target.value as unknown as DateRangeEnum)
         }
         displayEmpty
         inputProps={{ "aria-label": "Without label" }}
@@ -70,18 +68,18 @@ export default function DateRangeFilter({
         <MenuItem value="" disabled>
           Select Date Range
         </MenuItem>
-        <MenuItem value={DateRange.Today}>Today</MenuItem>
-        <MenuItem value={DateRange.This_Week}>This Week</MenuItem>
-        <MenuItem value={DateRange.This_Month}>This Month</MenuItem>
-        <MenuItem value={DateRange.Custom}>Custom</MenuItem>
+        <MenuItem value={DateRangeEnum.Today}>Today</MenuItem>
+        <MenuItem value={DateRangeEnum.This_Week}>This Week</MenuItem>
+        <MenuItem value={DateRangeEnum.This_Month}>This Month</MenuItem>
+        <MenuItem value={DateRangeEnum.Custom}>Custom</MenuItem>
       </Select>
 
-      {selectedDateRange === DateRange.Custom && (
+      {selectedDateRange === DateRangeEnum.Custom && (
         <div className="flex gap-2">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateTimePicker
               label="From Date"
-              value={dayjs(searchOptions.dateRange.fromDate)}
+              value={dayjs(dateRange.fromDate)}
               onChange={(date) => handleCustomDateChange("from", date)}
               slotProps={{
                 textField: {
@@ -93,7 +91,7 @@ export default function DateRangeFilter({
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateTimePicker
               label="To Date"
-              value={dayjs(searchOptions.dateRange.toDate)}
+              value={dayjs(dateRange.toDate)}
               onChange={(date) => handleCustomDateChange("to", date)}
               slotProps={{
                 textField: {

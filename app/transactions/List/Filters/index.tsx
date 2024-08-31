@@ -16,6 +16,7 @@ import {
   TRANSACTION_WITH_SEARCH_PARAMS,
 } from "@/constants/RedirectionUrl";
 import { debounce } from "@/lib/utils";
+import { DateRange } from "@/types/date";
 import { SearchOptions } from "@/types/transaction";
 
 import DateRangeFilter from "./DateRangeFilter";
@@ -35,6 +36,17 @@ export default function TransactionListFilters({
 
   const handleSearchOptionClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElSearch(event.currentTarget);
+  };
+
+  const onDateRangChange = (newDateRange: DateRange) => {
+    const newSearchOptions = {
+      ...searchOptions,
+      dateRange: newDateRange,
+    };
+    setSearchOptions(newSearchOptions);
+    router.push(
+      `transactions?appliedSearchOptions=${JSON.stringify(newSearchOptions)}`
+    );
   };
 
   const onKeywordSearch = (
@@ -115,8 +127,8 @@ export default function TransactionListFilters({
       />
 
       <DateRangeFilter
-        searchOptions={searchOptions}
-        setSearchOptions={setSearchOptions}
+        dateRange={searchOptions.dateRange}
+        onChange={onDateRangChange}
       />
     </div>
   );

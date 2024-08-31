@@ -6,6 +6,8 @@ import {
   TransactionType,
 } from "@/enums/Transaction";
 
+import { DateRange } from "./date";
+
 export type AddTransactionFormaValues = {
   id: string;
   description: string;
@@ -27,7 +29,7 @@ export type Transaction = {
 export type SearchOptions = {
   keyword?: string;
   keywordSearchFields: string[];
-  dateRange: { fromDate: Date; toDate: Date };
+  dateRange: DateRange;
   sort: {
     sortBy: SearchSortByOption;
     sortOrder: SearchSortOrderOption;
