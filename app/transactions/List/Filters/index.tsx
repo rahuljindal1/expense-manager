@@ -19,7 +19,7 @@ import { debounce } from "@/lib/utils";
 import { DateRange } from "@/types/date";
 import { SearchOptions } from "@/types/transaction";
 
-import DateRangeFilter from "./DateRangeFilter";
+import DateRangeFilter from "../../../../components/DateRangeFilter";
 import FilterOptionsPopover from "./FilterPopover";
 
 export default function TransactionListFilters({
