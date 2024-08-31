@@ -24,6 +24,7 @@ import LocalBarIcon from "@mui/icons-material/LocalBar";
 import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import LocalPostOfficeIcon from "@mui/icons-material/LocalPostOffice";
+import MoneyIcon from "@mui/icons-material/Money";
 import MovieIcon from "@mui/icons-material/Movie";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -38,7 +39,6 @@ import SpaIcon from "@mui/icons-material/Spa";
 import StoreIcon from "@mui/icons-material/Store";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import WorkIcon from "@mui/icons-material/Work";
-import MoneyIcon from "@mui/icons-material/Money";
 
 export const CATEGORIES = [
   { id: 1, name: "Food & Dining", icon: RestaurantIcon },

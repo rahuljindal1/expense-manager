@@ -1,9 +1,10 @@
+import { orderBy, sortBy } from "lodash";
+
 import { CATEGORIES } from "@/constants/Categories";
 import { SearchKeywordField, SearchSortOrderOption } from "@/enums/Transaction";
 import { SearchOptions, Transaction } from "@/types/transaction";
 
 import { KEY_NAMES, LocalForageService } from "./LocalForage";
-import { orderBy, sortBy } from "lodash";
 
 const localForageService = new LocalForageService();
 
