@@ -119,7 +119,7 @@ export default function TransactionList({
         <TableContainer
           component={Paper}
           className="w-[100%] h-[100%] relative"
-          sx={{ border: DARK_200, boxShadow: "none" }}
+          sx={{ border: `1px solid ${DARK_200}`, boxShadow: "none" }}
         >
           <OnLoadOrNoTransactionFound />
           <Table>

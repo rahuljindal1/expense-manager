@@ -15,6 +15,9 @@ import {
   TextField,
   InputAdornment,
   Tooltip,
+  Popper,
+  Fade,
+  Grow,
 } from "@mui/material";
 import {
   DatePicker,
@@ -34,7 +37,7 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import React, { ChangeEvent, useState } from "react";
 
-import { PRIMARY_BLUE, PRIMARY_BLUE_100 } from "@/constants/Colors";
+import { DARK_500, PRIMARY_BLUE, PRIMARY_BLUE_100 } from "@/constants/Colors";
 import {
   TRANSACTION_URL,
   TRANSACTION_WITH_SEARCH_PARAMS,
@@ -134,6 +137,22 @@ export default function TransactionListFilters({
     setSearchOptions({ ...searchOptions, dateRange: { fromDate, toDate } });
   };
 
+  const onKeywordSearch = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const trimmedKeyword = e.target.value.trim();
+    const newSearchOptions = {
+      ...searchOptions,
+      keyword: trimmedKeyword,
+    };
+    setSearchOptions(newSearchOptions);
+    router.push(
+      `${TRANSACTION_URL}?appliedSearchOptions=${JSON.stringify(
+        newSearchOptions
+      )}`
+    );
+  };
+
   const handleClose = () => {
     setAnchorElSearch(null);
   };
@@ -162,220 +181,213 @@ export default function TransactionListFilters({
         vertical: "bottom",
         horizontal: "left",
       }}
+      transitionDuration={0}
     >
-      <Box
-        p={2}
-        component={"div"}
-        className="flex flex-col gap-4 min-w-[360px]"
-      >
-        <Box component={"div"}>
-          <div className="mb-2 font-bold">Date Time Range</div>
-          <Box component={"div"} className="flex flex-col gap-4">
-            <Select
-              value={selectedDateRange}
-              onChange={(e) =>
-                handleDateRangeChange(e.target.value as unknown as DateRange)
-              }
-              displayEmpty
-              inputProps={{ "aria-label": "Without label" }}
-            >
-              <MenuItem value="" disabled>
-                Select Date Range
-              </MenuItem>
-              <MenuItem value={DateRange.Today}>Today</MenuItem>
-              <MenuItem value={DateRange.This_Week}>This Week</MenuItem>
-              <MenuItem value={DateRange.This_Month}>This Month</MenuItem>
-              <MenuItem value={DateRange.Custom}>Custom</MenuItem>
-            </Select>
+      <Paper sx={{ boxShadow: `0px 0px 20px ${DARK_500}` }}>
+        <Box
+          p={2}
+          component={"div"}
+          className="flex flex-col gap-4 min-w-[360px]"
+        >
+          <Box component={"div"}>
+            <div className="mb-2 font-bold">Date Time Range</div>
+            <Box component={"div"} className="flex flex-col gap-4">
+              <Select
+                value={selectedDateRange}
+                onChange={(e) =>
+                  handleDateRangeChange(e.target.value as unknown as DateRange)
+                }
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
+              >
+                <MenuItem value="" disabled>
+                  Select Date Range
+                </MenuItem>
+                <MenuItem value={DateRange.Today}>Today</MenuItem>
+                <MenuItem value={DateRange.This_Week}>This Week</MenuItem>
+                <MenuItem value={DateRange.This_Month}>This Month</MenuItem>
+                <MenuItem value={DateRange.Custom}>Custom</MenuItem>
+              </Select>
 
-            {selectedDateRange === DateRange.Custom && (
-              <div className="flex gap-2">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateTimePicker
-                    label="From Date"
-                    value={dayjs(searchOptions.dateRange.fromDate)}
-                    onChange={(date) => handleCustomDateChange("from", date)}
-                    slotProps={{
-                      textField: {
-                        size: "small",
-                      },
-                    }}
-                  />
-                </LocalizationProvider>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateTimePicker
-                    label="To Date"
-                    value={dayjs(searchOptions.dateRange.toDate)}
-                    onChange={(date) => handleCustomDateChange("to", date)}
-                    slotProps={{
-                      textField: {
-                        size: "small",
-                      },
-                    }}
-                  />
-                </LocalizationProvider>
-              </div>
-            )}
+              {selectedDateRange === DateRange.Custom && (
+                <div className="flex gap-2">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateTimePicker
+                      label="From Date"
+                      value={dayjs(searchOptions.dateRange.fromDate)}
+                      onChange={(date) => handleCustomDateChange("from", date)}
+                      slotProps={{
+                        textField: {
+                          size: "small",
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateTimePicker
+                      label="To Date"
+                      value={dayjs(searchOptions.dateRange.toDate)}
+                      onChange={(date) => handleCustomDateChange("to", date)}
+                      slotProps={{
+                        textField: {
+                          size: "small",
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+                </div>
+              )}
+            </Box>
           </Box>
-        </Box>
 
-        <Box component={"div"} className="flex flex-col">
-          <div className="mb-2 font-bold">Search In</div>
-          {Object.keys(SearchKeywordField).map((keywordField) => (
-            <FormControlLabel
-              key={keywordField}
-              control={
-                <Checkbox
-                  checked={searchOptions.keywordSearchFields?.includes(
-                    SearchKeywordField[keywordField as SearchKeywordField]
-                  )}
-                  onChange={() =>
-                    handleSearchKeywordFieldChange(
+          <Box component={"div"} className="flex flex-col">
+            <div className="mb-2 font-bold">Search In</div>
+            {Object.keys(SearchKeywordField).map((keywordField) => (
+              <FormControlLabel
+                key={keywordField}
+                control={
+                  <Checkbox
+                    checked={searchOptions.keywordSearchFields?.includes(
                       SearchKeywordField[keywordField as SearchKeywordField]
-                    )
-                  }
-                />
-              }
-              label={keywordField}
-            />
-          ))}
-        </Box>
+                    )}
+                    onChange={() =>
+                      handleSearchKeywordFieldChange(
+                        SearchKeywordField[keywordField as SearchKeywordField]
+                      )
+                    }
+                  />
+                }
+                label={keywordField}
+              />
+            ))}
+          </Box>
 
-        <Box component={"div"}>
-          <div className="mb-2 font-bold">Sort Order</div>
-          <Box component={"div"} className="flex flex-row gap-8">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={Boolean(
-                    searchOptions.sort.sortOrder === SearchSortOrderOption.DESC
-                  )}
-                  onChange={() =>
-                    setSearchOptions({
-                      ...searchOptions,
-                      sort: {
-                        ...searchOptions.sort,
-                        sortOrder: SearchSortOrderOption.DESC,
-                      },
-                    })
-                  }
-                />
-              }
-              label="DESC"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={Boolean(
-                    searchOptions.sort.sortOrder === SearchSortOrderOption.ASC
-                  )}
-                  onChange={() =>
-                    setSearchOptions({
-                      ...searchOptions,
-                      sort: {
-                        ...searchOptions.sort,
-                        sortOrder: SearchSortOrderOption.ASC,
-                      },
-                    })
-                  }
-                />
-              }
-              label="ASC"
-            />
+          <Box component={"div"}>
+            <div className="mb-2 font-bold">Sort Order</div>
+            <Box component={"div"} className="flex flex-row gap-8">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={Boolean(
+                      searchOptions.sort.sortOrder ===
+                        SearchSortOrderOption.DESC
+                    )}
+                    onChange={() =>
+                      setSearchOptions({
+                        ...searchOptions,
+                        sort: {
+                          ...searchOptions.sort,
+                          sortOrder: SearchSortOrderOption.DESC,
+                        },
+                      })
+                    }
+                  />
+                }
+                label="DESC"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={Boolean(
+                      searchOptions.sort.sortOrder === SearchSortOrderOption.ASC
+                    )}
+                    onChange={() =>
+                      setSearchOptions({
+                        ...searchOptions,
+                        sort: {
+                          ...searchOptions.sort,
+                          sortOrder: SearchSortOrderOption.ASC,
+                        },
+                      })
+                    }
+                  />
+                }
+                label="ASC"
+              />
+            </Box>
+          </Box>
+
+          <Box component={"div"}>
+            <div className="mb-2 font-bold">Sort By</div>
+            <Box component={"div"} className="flex flex-col ">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={Boolean(
+                      searchOptions.sort.sortBy === SearchSortByOption.Amount
+                    )}
+                    onChange={() =>
+                      setSearchOptions({
+                        ...searchOptions,
+                        sort: {
+                          ...searchOptions.sort,
+                          sortBy: SearchSortByOption.Amount,
+                        },
+                      })
+                    }
+                  />
+                }
+                label="Amount"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={Boolean(
+                      searchOptions.sort.sortBy ===
+                        SearchSortByOption.TransactionDate
+                    )}
+                    onChange={() =>
+                      setSearchOptions({
+                        ...searchOptions,
+                        sort: {
+                          ...searchOptions.sort,
+                          sortBy: SearchSortByOption.TransactionDate,
+                        },
+                      })
+                    }
+                  />
+                }
+                label="Date"
+              />
+            </Box>
           </Box>
         </Box>
 
-        <Box component={"div"}>
-          <div className="mb-2 font-bold">Sort By</div>
-          <Box component={"div"} className="flex flex-col ">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={Boolean(
-                    searchOptions.sort.sortBy === SearchSortByOption.Amount
-                  )}
-                  onChange={() =>
-                    setSearchOptions({
-                      ...searchOptions,
-                      sort: {
-                        ...searchOptions.sort,
-                        sortBy: SearchSortByOption.Amount,
-                      },
-                    })
-                  }
-                />
-              }
-              label="Amount"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={Boolean(
-                    searchOptions.sort.sortBy ===
-                      SearchSortByOption.TransactionDate
-                  )}
-                  onChange={() =>
-                    setSearchOptions({
-                      ...searchOptions,
-                      sort: {
-                        ...searchOptions.sort,
-                        sortBy: SearchSortByOption.TransactionDate,
-                      },
-                    })
-                  }
-                />
-              }
-              label="Date"
-            />
-          </Box>
+        <Divider orientation="horizontal" />
+
+        <Box component={"div"} p={2} className="flex justify-end gap-4">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              router.push(
+                `transactions?appliedSearchOptions=${JSON.stringify(
+                  searchOptions
+                )}`
+              );
+              handleClose();
+            }}
+          >
+            Save
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              router.push(TRANSACTION_WITH_SEARCH_PARAMS);
+              handleClose();
+            }}
+          >
+            Reset
+          </Button>
         </Box>
-      </Box>
-
-      <Divider orientation="horizontal" />
-
-      <Box component={"div"} p={2} className="flex justify-end gap-4">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            router.push(
-              `transactions?appliedSearchOptions=${JSON.stringify(
-                searchOptions
-              )}`
-            );
-            handleClose();
-          }}
-        >
-          Save
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            router.push(TRANSACTION_WITH_SEARCH_PARAMS);
-            handleClose();
-          }}
-        >
-          Reset
-        </Button>
-      </Box>
+      </Paper>
+      {/* {({ TransitionProps }) => (
+        <Fade {...TransitionProps} timeout={350}>
+          
+        </Fade>
+      )} */}
     </Popover>
   );
-
-  const onKeywordSearch = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const trimmedKeyword = e.target.value.trim();
-    const newSearchOptions = {
-      ...searchOptions,
-      keyword: trimmedKeyword,
-    };
-    setSearchOptions(newSearchOptions);
-    router.push(
-      `${TRANSACTION_URL}?appliedSearchOptions=${JSON.stringify(
-        newSearchOptions
-      )}`
-    );
-  };
 
   return (
     <div className="flex justify-end w-full items-center gap-2">
