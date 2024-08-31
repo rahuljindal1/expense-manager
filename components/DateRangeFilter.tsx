@@ -23,7 +23,6 @@ export default function DateRangeFilter({
       <div className="flex gap-2 items-center justify-center">
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateTimePicker
-            label="From Date"
             value={dayjs(dateRange.fromDate)}
             onAccept={(date) => handleCustomDateChange("from", date)}
             slotProps={{
@@ -32,6 +31,12 @@ export default function DateRangeFilter({
               },
             }}
             sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "12px",
+                paddingRight: "16px",
+                boxShadow:
+                  "rgba(0, 0, 0, 0.04) 0px 5px 22px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
+              },
               "& .MuiOutlinedInput-input": {
                 fontSize: "14px",
               },
@@ -41,7 +46,6 @@ export default function DateRangeFilter({
         <Divider orientation="horizontal" className="w-[8px] bg-black" />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateTimePicker
-            label="To Date"
             value={dayjs(dateRange.toDate)}
             onAccept={(date) => handleCustomDateChange("to", date)}
             slotProps={{
@@ -50,6 +54,12 @@ export default function DateRangeFilter({
               },
             }}
             sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "12px",
+                paddingRight: "16px",
+                boxShadow:
+                  "rgba(0, 0, 0, 0.04) 0px 5px 22px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
+              },
               "& .MuiOutlinedInput-input": {
                 fontSize: "14px",
               },
