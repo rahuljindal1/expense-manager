@@ -9,8 +9,8 @@ export enum SearchKeywordField {
 }
 
 export enum SearchSortOrderOption {
-  ASC = "asc",
   DESC = "desc",
+  ASC = "asc",
 }
 
 export enum SearchSortByOption {

@@ -3,7 +3,6 @@ import FilterIcon from "@mui/icons-material/Tune";
 import {
   Paper,
   IconButton,
-  InputBase,
   Divider,
   Button,
   Popover,
@@ -265,90 +264,52 @@ export default function TransactionListFilters({
           <Box component={"div"}>
             <div className="mb-2 font-bold">Sort Order</div>
             <Box component={"div"} className="flex flex-row gap-8">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={Boolean(
-                      searchOptions.sort.sortOrder ===
-                        SearchSortOrderOption.DESC
-                    )}
-                    onChange={() =>
-                      setSearchOptions({
-                        ...searchOptions,
-                        sort: {
-                          ...searchOptions.sort,
-                          sortOrder: SearchSortOrderOption.DESC,
-                        },
-                      })
-                    }
-                  />
-                }
-                label="DESC"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={Boolean(
-                      searchOptions.sort.sortOrder === SearchSortOrderOption.ASC
-                    )}
-                    onChange={() =>
-                      setSearchOptions({
-                        ...searchOptions,
-                        sort: {
-                          ...searchOptions.sort,
-                          sortOrder: SearchSortOrderOption.ASC,
-                        },
-                      })
-                    }
-                  />
-                }
-                label="ASC"
-              />
+              {Object.entries(SearchSortOrderOption).map(([key, value]) => (
+                <FormControlLabel
+                  key={key}
+                  control={
+                    <Checkbox
+                      checked={Boolean(searchOptions.sort.sortOrder === value)}
+                      onChange={() =>
+                        setSearchOptions({
+                          ...searchOptions,
+                          sort: {
+                            ...searchOptions.sort,
+                            sortOrder: value,
+                          },
+                        })
+                      }
+                    />
+                  }
+                  label={key}
+                />
+              ))}
             </Box>
           </Box>
 
           <Box component={"div"}>
             <div className="mb-2 font-bold">Sort By</div>
             <Box component={"div"} className="flex flex-col ">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={Boolean(
-                      searchOptions.sort.sortBy === SearchSortByOption.Amount
-                    )}
-                    onChange={() =>
-                      setSearchOptions({
-                        ...searchOptions,
-                        sort: {
-                          ...searchOptions.sort,
-                          sortBy: SearchSortByOption.Amount,
-                        },
-                      })
-                    }
-                  />
-                }
-                label="Amount"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={Boolean(
-                      searchOptions.sort.sortBy ===
-                        SearchSortByOption.TransactionDate
-                    )}
-                    onChange={() =>
-                      setSearchOptions({
-                        ...searchOptions,
-                        sort: {
-                          ...searchOptions.sort,
-                          sortBy: SearchSortByOption.TransactionDate,
-                        },
-                      })
-                    }
-                  />
-                }
-                label="Date"
-              />
+              {Object.entries(SearchSortByOption).map(([key, value]) => (
+                <FormControlLabel
+                  key={key}
+                  control={
+                    <Checkbox
+                      checked={Boolean(searchOptions.sort.sortBy === value)}
+                      onChange={() =>
+                        setSearchOptions({
+                          ...searchOptions,
+                          sort: {
+                            ...searchOptions.sort,
+                            sortBy: value,
+                          },
+                        })
+                      }
+                    />
+                  }
+                  label={key}
+                />
+              ))}
             </Box>
           </Box>
         </Box>
@@ -381,11 +342,6 @@ export default function TransactionListFilters({
           </Button>
         </Box>
       </Paper>
-      {/* {({ TransitionProps }) => (
-        <Fade {...TransitionProps} timeout={350}>
-          
-        </Fade>
-      )} */}
     </Popover>
   );
 
