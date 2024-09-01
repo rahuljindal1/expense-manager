@@ -79,7 +79,7 @@ export default function TransactionEntry({
           });
           toastService.success("Transaction added successfully");
         }
-        router.replace(TRANSACTION_WITH_SEARCH_PARAMS);
+        router.replace(`${TRANSACTION_WITH_SEARCH_PARAMS}&refetch=true`);
       } catch (error: any) {
         toastService.error(error.message || UNEXPECTED_ERROR);
       } finally {

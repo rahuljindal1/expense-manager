@@ -17,11 +17,17 @@ type SearchParamProps = {
     showTransactionModal?: boolean;
     transactionId?: string;
     appliedSearchOptions?: string;
+    refetch?: boolean;
   };
 };
 
 export default function Transactions({
-  searchParams: { showTransactionModal, transactionId, appliedSearchOptions },
+  searchParams: {
+    showTransactionModal,
+    transactionId,
+    appliedSearchOptions,
+    refetch,
+  },
 }: SearchParamProps) {
   const router = useRouter();
 
@@ -31,6 +37,7 @@ export default function Transactions({
         appliedSearchOptions={transactionService.sanitizeSearchOptions(
           appliedSearchOptions
         )}
+        refetch={refetch}
       />
 
       <div className="fixed bottom-4 right-4">

@@ -39,8 +39,10 @@ const toastService = new ToastService();
 
 export default function TransactionList({
   appliedSearchOptions,
+  refetch,
 }: {
   appliedSearchOptions: SearchOptions;
+  refetch?: boolean;
 }) {
   const router = useRouter();
 
@@ -107,7 +109,7 @@ export default function TransactionList({
     (async () => {
       await fetchTransactions(1);
     })();
-  }, [JSON.stringify(appliedSearchOptions)]);
+  }, [JSON.stringify(appliedSearchOptions), refetch]);
 
   return (
     <div className="space-y-3 flex flex-col justify-center items-center w-[100%]">

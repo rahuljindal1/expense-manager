@@ -1,12 +1,5 @@
-import SearchIcon from "@mui/icons-material/Search";
 import FilterIcon from "@mui/icons-material/Tune";
-import {
-  IconButton,
-  Box,
-  TextField,
-  InputAdornment,
-  Tooltip,
-} from "@mui/material";
+import { IconButton, Box, TextField, Tooltip } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React, { ChangeEvent, useState } from "react";
 
